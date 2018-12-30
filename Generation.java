@@ -14,7 +14,11 @@ public class Generation {
         this.size = size;
     }
     ArrayList<Evolvable> getBest(int n){
+        if (n>population.size()) n = population.size();
         return new ArrayList<Evolvable>(population.subList(0,n));
+    }
+    Evolvable getBest(){
+        return getBest(1).get(0);
     }
     //private ArrayList<Evolvable> parents;
 

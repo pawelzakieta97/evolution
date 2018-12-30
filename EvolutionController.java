@@ -2,6 +2,12 @@ import java.util.ArrayList;
 
 public class EvolutionController{
     private ArrayList<Generation> generations = new ArrayList<Generation>();
+
+    public void setOwner(ControllerInterface owner) {
+        this.owner = owner;
+    }
+
+    private ControllerInterface owner;
     public EvolutionController(Evolvable origin){
         Generation gen0 = new Generation();
         gen0.setSize(10);
@@ -27,4 +33,17 @@ public class EvolutionController{
         generations.add(nextGen);
         return nextGen.getBest(1).get(0).getCost();
     }
+
+    public void start(int genSize, int parentsNum, float amount) throws Exception{
+        if(owner == null) throw new Exception("you need to specify owner first");
+        new Thread(()->{
+            while (owner.isRunning()){
+                update(genSize, parentsNum, amount);
+                owner.setCurrentBest(generations.get(generations.size()-1).getBest());
+            }
+            System.out.println("thread ending");
+        }).start();
+
+    }
+
 }
