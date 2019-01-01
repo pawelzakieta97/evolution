@@ -9,7 +9,7 @@ public interface Evolvable{
      * Introduces modifications to objects features
      * @param amount determines how much the object is supposed to be changed
      */
-    public void mutate(float amount);
+    public void mutate(double amount);
 //
 //    default public double compareTo(Evolvable o) {
 //        return (cost - o.cost);

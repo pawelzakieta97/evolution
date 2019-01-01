@@ -18,7 +18,7 @@ public class EvolvableClass implements Evolvable{
     public double getCost(){
         return cost;
     }
-    public void mutate(float amount){
+    public void mutate(double amount){
         x+=((Math.random()-0.5)*amount);
         y+=((Math.random()-0.5)*amount);
         z+=((Math.random()-0.5)*amount);

@@ -14,23 +14,24 @@ public class CanvasEffects extends Application {
     public void start(Stage stage) {
         final Image image = new Image(IMAGE_LOC);
 
-        final int NUM_IMGS = 5;
-        final double W = image.getWidth();
-        final double H = image.getWidth();
+        final int NUM_IMGS = 1;
+        final double W = Constants.resx;
+        final double H = Constants.resy;
 
 
         final Canvas canvas = new Canvas(W * NUM_IMGS, H);
         final GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        gc.setFill(Color.GOLD);
+        gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         LinkedList<Point> p1list = new LinkedList<>();
-        p1list.add(new Point(0, 0));
-        p1list.add(new Point(50, 0));
-        p1list.add(new Point(50, 50));
-        p1list.add(new Point(0, 50));
+        p1list.add(new Point(100, 100));
+        p1list.add(new Point(150, 100));
+        p1list.add(new Point(150, 150));
+        p1list.add(new Point(100, 150));
         Polygon p1 = new Polygon(p1list, Color.color(0,0,0.5,1.0));
+        p1.mutate(0.1);
 
         p1.draw(gc, 0.5);
         stage.setScene(new Scene(new Group(canvas)));
