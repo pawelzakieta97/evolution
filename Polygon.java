@@ -27,12 +27,14 @@ public class Polygon implements Cloneable{
     public Polygon(){
 
     }
-    public Polygon(String s){
+    public Polygon(PolygonMutationParams params){
         int[] x = new int[4];
         int[] y = new int[4];
+        int basex = generator.nextInt(Constants.RES_X);
+        int basey = generator.nextInt(Constants.RES_Y);
         for (int i = 0; i<4; i++){
-            x[i] = generator.nextInt(Constants.RES_X);
-            y[i] = generator.nextInt(Constants.RES_Y);
+            x[i] = basex+generator.nextInt((int)(Constants.RES_X*params.polygonSize));
+            y[i] = basey+generator.nextInt((int)(Constants.RES_Y*params.polygonSize));
         }
         Color color = new Color(generator.nextDouble(),generator.nextDouble(),generator.nextDouble(),generator.nextDouble());
         Polygon p = new Polygon(x,y,4,color);
@@ -59,7 +61,16 @@ public class Polygon implements Cloneable{
             p.mutate(amount*multiplier);
         }
         mutateColor(amount);
-
+    }
+    public void mutate(PolygonMutationParams parameters){
+        if (generator.nextDouble()<parameters.addVertexChance) addRandomVertex();
+        if (vertices.size()>3) {
+            if (generator.nextDouble() < parameters.deleteVertexChance) removeRandomVertex();
+        }
+        for(Point p: vertices){
+            p.mutate(parameters.vertexShift);
+        }
+        mutateColor(parameters.colorChange);
     }
     public void move(int x, int y){
         for (Point p: vertices){

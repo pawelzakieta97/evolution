@@ -38,6 +38,16 @@ public class EvolutionController{
         generations.add(nextGen);
         return nextGen.getBest().getCost();
     }
+    public double update(int genSize, int parentsNum, MutationParameters params){
+        Generation nextGen = new Generation();
+        nextGen.populate(getLastGen().getBest(parentsNum), genSize);
+        nextGen.mutate(params);
+        //adding previous best individuals without mutating
+        nextGen.population.addAll(getLastGen().getBest(parentsNum));
+        nextGen.process();
+        generations.add(nextGen);
+        return nextGen.getBest().getCost();
+    }
 
     public void start(int genSize, int parentsNum, float amount) throws Exception{
         if(owner == null) throw new Exception("you need to specify owner first");

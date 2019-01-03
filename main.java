@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class main extends Application {
     public void start(Stage stage) {stage.setTitle("BufferedImageTest");
@@ -26,29 +27,41 @@ public class main extends Application {
         //entity.polygons.add(p2);
         //entity.polygons.add(p3);
         //System.out.println(entity);
-
         Image img = new Image("view.png");
+        final Canvas canvas = new Canvas(img.getWidth(),img.getHeight());
+        final GraphicsContext gc = canvas.getGraphicsContext2D();
+        stage.setScene(new Scene(new Group(canvas)));
+        stage.show();
+
         entity.setTargetImage(img);
         EvolutionController controller = new EvolutionController(entity);
         System.out.println(entity);
-        double error = 100000000;
-        for (int i = 0; i<180; i++) {
-            error = controller.update(1000, 1, 0.015);
+        PolygonMutationParams params = new PolygonMutationParams(0, 0.3,0.15,0.05, 0.05, 0.01, 0.01, 0.05);
+        double error = 2000;
+
+        for (int i = 0; i<200; i++) {
+            params.polygonSize = 0.3*error/2000;
+            error = controller.update(500, 10, params);
             Generation gen = controller.getLastGen();
             controller.generations = new ArrayList<Generation>();
             controller.generations.add(gen);
             System.out.println(error+" at gen: "+i);
+
+            entity = (PolygonSet)controller.getLastGen().getBest();
+            entity.drawPolygons(gc);
+
+            //stage.setScene(new Scene(new Group(canvas)));
+            //stage.show();
         }
         System.out.println((PolygonSet)controller.generations.get(controller.generations.size()-1).getBest());
 //        entity.evaluate();
 //        System.out.println(entity.getCost());
-        final Canvas canvas = new Canvas(img.getWidth(),img.getHeight());
-        final GraphicsContext gc = canvas.getGraphicsContext2D();
-        entity = (PolygonSet)controller.getLastGen().getBest();
-        entity.drawPolygons(gc);
+
+        //entity = (PolygonSet)controller.getLastGen().getBest();
+        //entity.drawPolygons(gc);
         //entity.subtractTargetImage(gc);
-        stage.setScene(new Scene(new Group(canvas)));
-        stage.show();
+        //stage.setScene(new Scene(new Group(canvas)));
+        //stage.show();
     }
     public static void main(String[] args) {
 

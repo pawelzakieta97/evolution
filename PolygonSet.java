@@ -46,10 +46,24 @@ public class PolygonSet implements Evolvable {
             }
         }
         if (generator.nextDouble()<amount*10){
-            addRandomPolygon();
+            addRandomPolygon(new PolygonMutationParams(0,0,0,1,0,0,0,0));
         }
         for (Polygon pol: polygons) pol.mutate(amount);
     }
+
+    public void mutate(MutationParameters params){
+        PolygonMutationParams parameters = (PolygonMutationParams)params;
+        if(polygons.size()>1) {
+            if (generator.nextDouble() < parameters.deletePolyChance) {
+                removeRandomPolygon();
+            }
+        }
+        if (generator.nextDouble()<parameters.addPolyChance){
+            addRandomPolygon((PolygonMutationParams)params);
+        }
+        for (Polygon pol: polygons) pol.mutate(parameters);
+    }
+
     public ArrayList<Evolvable> breed(ArrayList<Evolvable> parents, int n, double crossover){
         ArrayList<Evolvable> children = new ArrayList<>();
         for(int i = 0; i < n; i++){
@@ -71,9 +85,9 @@ public class PolygonSet implements Evolvable {
         //System.out.println("removing random polygon");
         polygons.remove(generator.nextInt(polygons.size()));
     }
-    public void addRandomPolygon(){
+    public void addRandomPolygon(PolygonMutationParams params){
         //System.out.println("adding random polygon");
-        polygons.add(new Polygon("triangle"));
+        polygons.add(new Polygon(params));
     }
     public BufferedImage getImage(){
         BufferedImage bi = new BufferedImage(

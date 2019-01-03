@@ -22,6 +22,11 @@ public class Generation {
             i.mutate(amount);
         }
     }
+    public void mutate(MutationParameters params){
+        for (Evolvable i: population){
+            i.mutate(params);
+        }
+    }
 
     /**
      * method checks fitness and sorts individuals (best ones are at the beginning)
