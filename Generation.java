@@ -3,16 +3,8 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class Generation {
-    private ArrayList<Evolvable> population;
-    private int size = 10;
+    public ArrayList<Evolvable> population;
 
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
     ArrayList<Evolvable> getBest(int n){
         if (n>population.size()) n = population.size();
         return new ArrayList<Evolvable>(population.subList(0,n));
@@ -20,13 +12,12 @@ public class Generation {
     Evolvable getBest(){
         return getBest(1).get(0);
     }
-    //private ArrayList<Evolvable> parents;
 
-    public void populate(ArrayList<Evolvable> parents){
+    public void populate(ArrayList<Evolvable> parents, int size){
         //parents = new ArrayList<Evolvable>(population.subList(0, parentsNum));
-        population = parents.get(0).breed(parents, size);
+        population = parents.get(0).breed(parents, size, 0);
     }
-    public void randomize(float amount){
+    public void mutate(double amount){
         for (Evolvable i: population){
             i.mutate(amount);
         }

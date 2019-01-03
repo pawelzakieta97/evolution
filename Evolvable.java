@@ -20,7 +20,7 @@ public interface Evolvable{
      * @param n specifies how many children you want to generate
      * @return an array of children (all of them are the same)
      */
-    public ArrayList<Evolvable> breed(ArrayList<Evolvable> parents, int n);
+    public ArrayList<Evolvable> breed(ArrayList<Evolvable> parents, int n, double crossover);
 
     /**
      * sepcifies how good the object is (cost function). Updates cost field

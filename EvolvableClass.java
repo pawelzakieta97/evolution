@@ -24,7 +24,7 @@ public class EvolvableClass implements Evolvable{
         z+=((Math.random()-0.5)*amount);
     }
 
-    public ArrayList<Evolvable> breed(ArrayList<Evolvable> parents, int n){
+    public ArrayList<Evolvable> breed(ArrayList<Evolvable> parents, int n, double crossover){
         ArrayList<Evolvable> children = new ArrayList<>();
         for (int i=0; i<n; i++){
             Evolvable p1 = parents.get((int)(Math.random() * parents.size()));

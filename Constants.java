@@ -1,7 +1,7 @@
-public final class Constants {
+public class Constants {
     private Constants() {
         // restrict instantiation
     }
-    public static final int resx = 500;
-    public static final int resy = 500;
+    public static int RES_X = 0;
+    public static int RES_Y = 0;
 }

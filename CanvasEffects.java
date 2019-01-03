@@ -15,8 +15,8 @@ public class CanvasEffects extends Application {
         final Image image = new Image(IMAGE_LOC);
 
         final int NUM_IMGS = 1;
-        final double W = Constants.resx;
-        final double H = Constants.resy;
+        final double W = Constants.RES_X;
+        final double H = Constants.RES_Y;
 
 
         final Canvas canvas = new Canvas(W * NUM_IMGS, H);
@@ -30,10 +30,24 @@ public class CanvasEffects extends Application {
         p1list.add(new Point(150, 100));
         p1list.add(new Point(150, 150));
         p1list.add(new Point(100, 150));
-        Polygon p1 = new Polygon(p1list, Color.color(0,0,0.5,1.0));
+        int[] x = {100, 150, 150, 100};
+        int[] y = {100, 100, 150, 150};
+        Polygon p1 = new Polygon(x, y, 4, Color.color(1,0,0,0.5));
+        Polygon p2 = new Polygon(x, y, 4, Color.color(0,0,0,0.5));
+        Polygon p3 = new Polygon(x, y, 4, Color.color(0,0,1,0.5));
+        Polygon p4 = new Polygon();
         p1.mutate(0.1);
+        p2.mutate(0.1);
+        p3.mutate(0.1);
+        p4.mutate(0.1);
 
-        p1.draw(gc, 0.5);
+        p1.draw(gc);
+        p2.draw(gc);
+        p3.draw(gc);
+        p4.draw(gc);
+        gc.setGlobalAlpha(1.0);
+        gc.setGlobalBlendMode(BlendMode.DIFFERENCE);
+        gc.drawImage(image, 0,0);
         stage.setScene(new Scene(new Group(canvas)));
         stage.show();
     }
