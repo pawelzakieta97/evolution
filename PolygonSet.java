@@ -138,10 +138,10 @@ public class PolygonSet implements Evolvable {
         PixelReader reader = snap.getPixelReader();
         cost = 0;
 
-        for (int y=0; y<Constants.RES_Y; y+=10){
-            for (int x=0; x<Constants.RES_X; x+=10){
+        for (int y=0; y<Constants.RES_Y; y+=2){
+            for (int x=0; x<Constants.RES_X; x+=2){
                 Color sample = reader.getColor(x,y);
-                cost+=sample.getBlue()+sample.getGreen()+sample.getRed();
+                cost+=sample.getBlue()*sample.getBlue()+sample.getGreen()*sample.getGreen()+sample.getRed()*sample.getRed();
             }
         }
     }

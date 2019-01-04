@@ -28,16 +28,16 @@ public class Polygon implements Cloneable{
 
     }
     public Polygon(PolygonMutationParams params){
-        int[] x = new int[4];
-        int[] y = new int[4];
+        int[] x = new int[3];
+        int[] y = new int[3];
         int basex = generator.nextInt(Constants.RES_X);
         int basey = generator.nextInt(Constants.RES_Y);
-        for (int i = 0; i<4; i++){
+        for (int i = 0; i<3; i++){
             x[i] = basex+generator.nextInt((int)(Constants.RES_X*params.polygonSize));
             y[i] = basey+generator.nextInt((int)(Constants.RES_Y*params.polygonSize));
         }
         Color color = new Color(generator.nextDouble(),generator.nextDouble(),generator.nextDouble(),generator.nextDouble());
-        Polygon p = new Polygon(x,y,4,color);
+        Polygon p = new Polygon(x,y,3,color);
         this.vertices = p.vertices;
         this.color = p.color;
     }
@@ -68,9 +68,14 @@ public class Polygon implements Cloneable{
             if (generator.nextDouble() < parameters.deleteVertexChance) removeRandomVertex();
         }
         for(Point p: vertices){
-            p.mutate(parameters.vertexShift);
+            if (generator.nextDouble()<parameters.amount) {
+                p.mutate(parameters.vertexShift);
+            }
         }
-        mutateColor(parameters.colorChange);
+        if (generator.nextDouble()<parameters.amount) {
+            mutateColor(parameters.colorChange);
+        }
+
     }
     public void move(int x, int y){
         for (Point p: vertices){
@@ -90,7 +95,8 @@ public class Polygon implements Cloneable{
         color = new Color(Math.max(Math.min(color.getRed()+generator.nextGaussian()*amount,1),0),
                 Math.max(Math.min(color.getGreen()+generator.nextGaussian()*amount,1),0),
                 Math.max(Math.min(color.getBlue()+generator.nextGaussian()*amount,1),0),
-                Math.max(Math.min(color.getOpacity()+generator.nextGaussian()*amount,1),0)
+                Math.max(Math.min(color.getOpacity()+generator.nextGaussian()*amount,0.8),0.1)
+                //0.3
         );
     }
 

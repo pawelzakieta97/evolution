@@ -27,21 +27,24 @@ public class main extends Application {
         //entity.polygons.add(p2);
         //entity.polygons.add(p3);
         //System.out.println(entity);
-        Image img = new Image("view.png");
+        Image img = new Image("mona.jpg");
         final Canvas canvas = new Canvas(img.getWidth(),img.getHeight());
         final GraphicsContext gc = canvas.getGraphicsContext2D();
         stage.setScene(new Scene(new Group(canvas)));
         stage.show();
 
         entity.setTargetImage(img);
-        EvolutionController controller = new EvolutionController(entity);
-        System.out.println(entity);
-        PolygonMutationParams params = new PolygonMutationParams(0, 0.3,0.15,0.05, 0.05, 0.01, 0.01, 0.05);
-        double error = 2000;
 
-        for (int i = 0; i<200; i++) {
-            params.polygonSize = 0.3*error/2000;
-            error = controller.update(500, 10, params);
+        System.out.println(entity);
+        PolygonMutationParams params = new PolygonMutationParams(0.02, 0.0,0.0,0.1, 0.05, 0.02, 0.02, 0.05);
+        double error = 2000;
+        for (int i = 0; i<50; i++){
+            entity.polygons.add(new Polygon(params));
+        }
+        EvolutionController controller = new EvolutionController(entity);
+        for (int i = 0; i<1000; i++) {
+            params.polygonSize = 0.1*error/800;
+            error = controller.update(100, 2, params);
             Generation gen = controller.getLastGen();
             controller.generations = new ArrayList<Generation>();
             controller.generations.add(gen);
