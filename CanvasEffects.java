@@ -36,10 +36,6 @@ public class CanvasEffects extends Application {
         Polygon p2 = new Polygon(x, y, 4, Color.color(0,0,0,0.5));
         Polygon p3 = new Polygon(x, y, 4, Color.color(0,0,1,0.5));
         Polygon p4 = new Polygon();
-        p1.mutate(0.1);
-        p2.mutate(0.1);
-        p3.mutate(0.1);
-        p4.mutate(0.1);
 
         p1.draw(gc);
         p2.draw(gc);

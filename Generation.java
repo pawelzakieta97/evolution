@@ -15,13 +15,13 @@ public class Generation {
 
     public void populate(ArrayList<Evolvable> parents, int size){
         //parents = new ArrayList<Evolvable>(population.subList(0, parentsNum));
-        population = parents.get(0).breed(parents, size, 0);
+        population = parents.get(0).breed(parents, size, 0.1);
     }
-    public void mutate(double amount){
-        for (Evolvable i: population){
-            i.mutate(amount);
-        }
-    }
+//    public void mutate(double amount){
+//        for (Evolvable i: population){
+//            i.mutate(amount);
+//        }
+//    }
     public void mutate(MutationParameters params){
         for (Evolvable i: population){
             i.mutate(params);

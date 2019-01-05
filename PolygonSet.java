@@ -26,6 +26,8 @@ public class PolygonSet implements Evolvable {
 
     private double cost=0;
     public ArrayList<Polygon> polygons = new ArrayList<>();
+    public PolygonSet base = null;
+    public PolygonMutationParams recentParams;
 
     public static Image getTargetImage() {
         return targetImage;
@@ -33,26 +35,26 @@ public class PolygonSet implements Evolvable {
 
     public static void setTargetImage(Image targetImage) {
         PolygonSet.targetImage = targetImage;
-        Constants.RES_X = (int)targetImage.getWidth();
-        Constants.RES_Y = (int)targetImage.getHeight();
+        PolygonSet.targetImage = targetImage;
     }
 
     private static Image targetImage;
     Random generator = new Random();
-    public void mutate(double amount){
-        if(polygons.size()>1) {
-            if (generator.nextDouble() < amount*10) {
-                removeRandomPolygon();
-            }
-        }
-        if (generator.nextDouble()<amount*10){
-            addRandomPolygon(new PolygonMutationParams(0,0,0,1,0,0,0,0));
-        }
-        for (Polygon pol: polygons) pol.mutate(amount);
-    }
+//    public void mutate(double amount){
+//        if(polygons.size()>1) {
+//            if (generator.nextDouble() < amount*10) {
+//                removeRandomPolygon();
+//            }
+//        }
+//        if (generator.nextDouble()<amount*10){
+//            addRandomPolygon(new PolygonMutationParams(0,0,0,1,0,0,0,0));
+//        }
+//        for (Polygon pol: polygons) pol.mutate(amount);
+//    }
 
     public void mutate(MutationParameters params){
         PolygonMutationParams parameters = (PolygonMutationParams)params;
+        recentParams = parameters;
         if(polygons.size()>1) {
             if (generator.nextDouble() < parameters.deletePolyChance) {
                 removeRandomPolygon();
@@ -100,13 +102,18 @@ public class PolygonSet implements Evolvable {
     public void drawPolygons(GraphicsContext gc){
         //gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         gc.setGlobalAlpha(1.0);
-        gc.setFill(new Color(1,1,1,1));
-        gc.fillRect(0,0,targetImage.getWidth(), targetImage.getHeight());
+        //gc.setFill(new Color(1,1,1,1));
+        //gc.fillRect(0,0,targetImage.getWidth(), targetImage.getHeight());
         for (Polygon polygon: polygons){
             //System.out.println("drawing polygon");
             polygon.draw(gc);
         }
 
+    }
+    public void drawBackground(GraphicsContext gc){
+        gc.setGlobalAlpha(1.0);
+        gc.setFill(new Color(1,1,1,1));
+        gc.fillRect(0,0,targetImage.getWidth(), targetImage.getHeight());
     }
     public void subtractTargetImage(GraphicsContext gc){
         BlendMode prev = gc.getGlobalBlendMode();
@@ -126,8 +133,10 @@ public class PolygonSet implements Evolvable {
         return out;
     }
     public void evaluate(){
-        final javafx.scene.canvas.Canvas canvas = new Canvas(Constants.RES_X, Constants.RES_Y);
+        final javafx.scene.canvas.Canvas canvas = new Canvas(targetImage.getWidth(), targetImage.getHeight());
         final GraphicsContext gc = canvas.getGraphicsContext2D();
+        drawBackground(gc);
+        if (base != null) base.drawPolygons(gc);
         drawPolygons(gc);
         subtractTargetImage(gc);
         WritableImage snap = gc.getCanvas().snapshot(null, null);
@@ -138,10 +147,10 @@ public class PolygonSet implements Evolvable {
         PixelReader reader = snap.getPixelReader();
         cost = 0;
 
-        for (int y=0; y<Constants.RES_Y; y+=2){
-            for (int x=0; x<Constants.RES_X; x+=2){
+        for (int y=recentParams.ROIy; y<recentParams.ROIy+recentParams.height; y+=2){
+            for (int x=recentParams.ROIx; x<recentParams.ROIx+recentParams.width; x+=2){
                 Color sample = reader.getColor(x,y);
-                cost+=sample.getBlue()*sample.getBlue()+sample.getGreen()*sample.getGreen()+sample.getRed()*sample.getRed();
+                cost+=(sample.getBlue()*sample.getBlue()+sample.getGreen()*sample.getGreen()+sample.getRed()*sample.getRed())/3;
             }
         }
     }
@@ -150,7 +159,63 @@ public class PolygonSet implements Evolvable {
         for(Polygon polygon: polygons){
             o.polygons.add((Polygon)polygon.clone());
         }
+        o.base = base;
+        o.recentParams = (PolygonMutationParams)recentParams.clone();
         return o;
     }
 
+    public double getFitness(){
+        return 1.0-cost/recentParams.width/recentParams.height;
+    }
+
+    public WritableImage getCostMap(){
+        final javafx.scene.canvas.Canvas canvas = new Canvas(recentParams.width, recentParams.height);
+        final GraphicsContext gc = canvas.getGraphicsContext2D();
+        if (base != null) base.drawPolygons(gc);
+        drawPolygons(gc);
+        subtractTargetImage(gc);
+        WritableImage snap = gc.getCanvas().snapshot(null, null);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setSaturation(-1.0);
+        gc.setEffect(colorAdjust);
+        gc.drawImage(snap, 0,0);
+        return snap;
+    }
+
+    public Point getROI(int level, Image costMap){
+        if (costMap == null) costMap = getCostMap();
+        PixelReader reader = costMap.getPixelReader();
+        double[][] integral = new double[(int)costMap.getWidth()][(int)costMap.getHeight()];
+        integral[0][0] = colorBrightness(reader.getColor(0,0));
+        for (int x=1; x<costMap.getWidth(); x++) integral[x][0] = integral[x-1][0]+colorBrightness(reader.getColor(x,0));
+        for (int y=1; y<costMap.getHeight(); y++) integral[0][y] = integral[0][y-1]+colorBrightness(reader.getColor(0,y));
+        for (int y=1; y<costMap.getHeight(); y++) {
+            for (int x = 1; x < costMap.getWidth(); x++) {
+                integral[x][y] = integral[x-1][y]+integral[x][y-1]-integral[x-1][y-1]+colorBrightness(reader.getColor(x,y));
+            }
+        }
+        int roiWidth = (int)(costMap.getWidth()/Math.pow(2,level));
+        int roiHeight = (int)(costMap.getHeight()/Math.pow(2,level));
+        int x_max = 0;
+        int y_max = 0;
+        double maxCost = 0;
+        for(int x=0; x<costMap.getWidth()-roiWidth; x++){
+            for(int y=0; y<costMap.getHeight()-roiHeight; y++){
+                double sum = integral[x+roiWidth][y+roiHeight]-integral[x][y+roiHeight]-integral[x+roiWidth][y]+integral[x][y];
+                if (sum>maxCost){
+                    x_max = x;
+                    y_max = y;
+                    maxCost = sum;
+                }
+            }
+        }
+        return new Point(x_max, y_max);
+    }
+    public void clearPolys(){
+        polygons.clear();
+    }
+
+    static double colorBrightness(Color sample){
+        return (sample.getBlue()*sample.getBlue()+sample.getGreen()*sample.getGreen()+sample.getRed()*sample.getRed())/3;
+    }
 }

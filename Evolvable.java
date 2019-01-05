@@ -5,14 +5,9 @@ import java.util.ArrayList;
  */
 public interface Evolvable{
     public double getCost();
-    /**
-     * Introduces modifications to objects features
-     * @param amount determines how much the object is supposed to be changed
-     */
-    public void mutate(double amount);
-    default public void mutate(MutationParameters params){
-        mutate(params.getAmount());
-    }
+
+
+    public void mutate(MutationParameters params);
 //
 //    default public double compareTo(Evolvable o) {
 //        return (cost - o.cost);

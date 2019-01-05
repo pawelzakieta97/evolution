@@ -25,19 +25,19 @@ public class EvolutionController{
      * proceedes with next generation and processes it- checks fitness and sorts
      * @param genSize desribes the size of the generation
      * @param parentsNum specifies how many best individuals from previous generation are parents for the next
-     * @param amount specifies the rate of change of individuals due to mutation
+     * @param params specifies the rate of change of individuals due to mutation
      * @return cost function value of the best individual in new generation
      */
-    public double update(int genSize, int parentsNum, double amount){
-        Generation nextGen = new Generation();
-        nextGen.populate(getLastGen().getBest(parentsNum), genSize);
-        nextGen.mutate(amount);
-        //adding previous best individuals without mutating
-        nextGen.population.addAll(getLastGen().getBest(parentsNum));
-        nextGen.process();
-        generations.add(nextGen);
-        return nextGen.getBest().getCost();
-    }
+//    public double update(int genSize, int parentsNum, double amount){
+//        Generation nextGen = new Generation();
+//        nextGen.populate(getLastGen().getBest(parentsNum), genSize);
+//        nextGen.mutate(amount);
+//        //adding previous best individuals without mutating
+//        nextGen.population.addAll(getLastGen().getBest(parentsNum));
+//        nextGen.process();
+//        generations.add(nextGen);
+//        return nextGen.getBest().getCost();
+//    }
     public double update(int genSize, int parentsNum, MutationParameters params){
         Generation nextGen = new Generation();
         nextGen.populate(getLastGen().getBest(parentsNum), genSize);
@@ -49,16 +49,23 @@ public class EvolutionController{
         return nextGen.getBest().getCost();
     }
 
-    public void start(int genSize, int parentsNum, float amount) throws Exception{
+    public void start(int genSize, int parentsNum, MutationParameters params) throws Exception{
         if(owner == null) throw new Exception("you need to specify owner first");
         new Thread(()->{
             while (owner.isRunning()){
-                update(genSize, parentsNum, amount);
+                update(genSize, parentsNum, params);
                 owner.setCurrentBest(generations.get(generations.size()-1).getBest());
             }
             System.out.println("thread ending");
         }).start();
 
+    }
+
+
+    public void clear(){
+        Generation gen = getLastGen();
+        generations = new ArrayList<Generation>();
+        generations.add(gen);
     }
 
 }

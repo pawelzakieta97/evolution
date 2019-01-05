@@ -7,17 +7,23 @@ public class Point implements Cloneable{
         this.x = x;
         this.y = y;
     }
-    public void mutate(double amount){
-        move((int)(generator.nextGaussian()*amount*Constants.RES_X), (int)(generator.nextGaussian()*amount*Constants.RES_Y));
+    public void mutate(PolygonMutationParams params){
+        this.x += generator.nextGaussian()*params.vertexShift*params.width;
+        this.y += generator.nextGaussian()*params.vertexShift*params.height;
+        if (this.x < params.ROIx) this.x = params.ROIx;
+        if (this.x > params.ROIx+params.width) this.x = params.ROIx+params.width;
+        if (this.y < params.ROIy) this.y = params.ROIy;
+        if (this.y > params.ROIy+params.height) this.y = params.ROIy+params.height;
+
     }
 
     void move(int x, int y){
         this.x += x;
         this.y += y;
-        if (this.x>=Constants.RES_X) this.x = Constants.RES_X;
-        if (this.x<0) this.x = 0;
-        if (this.y>=Constants.RES_Y) this.y = Constants.RES_Y;
-        if (this.y<0) this.y=0;
+//        if (this.x>=Constants.RES_X) this.x = Constants.RES_X;
+//        if (this.x<0) this.x = 0;
+//        if (this.y>=Constants.RES_Y) this.y = Constants.RES_Y;
+//        if (this.y<0) this.y=0;
 
     }
     public Object clone(){

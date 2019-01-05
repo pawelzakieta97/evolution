@@ -30,11 +30,15 @@ public class Polygon implements Cloneable{
     public Polygon(PolygonMutationParams params){
         int[] x = new int[3];
         int[] y = new int[3];
-        int basex = generator.nextInt(Constants.RES_X);
-        int basey = generator.nextInt(Constants.RES_Y);
+        int basex = params.ROIx + generator.nextInt(params.width);
+        int basey = params.ROIy + generator.nextInt(params.height);
         for (int i = 0; i<3; i++){
-            x[i] = basex+generator.nextInt((int)(Constants.RES_X*params.polygonSize));
-            y[i] = basey+generator.nextInt((int)(Constants.RES_Y*params.polygonSize));
+            x[i] = basex+generator.nextInt((int)(params.width*params.polygonSize+1));
+            y[i] = basey+generator.nextInt((int)(params.height*params.polygonSize+1));
+            if(x[i]<params.ROIx) x[i]=params.ROIx;
+            if(x[i]>params.ROIx+params.width) x[i] = params.ROIx+params.width;
+            if(y[i]<params.ROIy) x[i]=params.ROIy;
+            if(y[i]>params.ROIy+params.height) y[i] = params.ROIy+params.height;
         }
         Color color = new Color(generator.nextDouble(),generator.nextDouble(),generator.nextDouble(),generator.nextDouble());
         Polygon p = new Polygon(x,y,3,color);
@@ -50,18 +54,18 @@ public class Polygon implements Cloneable{
         g2.setPaint(c);
         g2.fillPolygon(getXCoordinates(), getYCoordinates(),vertices.size());
     }
-    public void mutate(double amount){
-        if (generator.nextDouble()<amount) addRandomVertex();
-        if (vertices.size()>3) {
-            if (generator.nextDouble() < amount) removeRandomVertex();
-        }
-        for(Point p: vertices){
-            //if (generator.nextDouble()<amount) p.mutate(amount);
-            double multiplier = 1;
-            p.mutate(amount*multiplier);
-        }
-        mutateColor(amount);
-    }
+//    public void mutate(double amount){
+//        if (generator.nextDouble()<amount) addRandomVertex();
+//        if (vertices.size()>3) {
+//            if (generator.nextDouble() < amount) removeRandomVertex();
+//        }
+//        for(Point p: vertices){
+//            //if (generator.nextDouble()<amount) p.mutate(amount);
+//            double multiplier = 1;
+//            p.mutate(amount*multiplier);
+//        }
+//        mutateColor(amount);
+//    }
     public void mutate(PolygonMutationParams parameters){
         if (generator.nextDouble()<parameters.addVertexChance) addRandomVertex();
         if (vertices.size()>3) {
@@ -69,7 +73,7 @@ public class Polygon implements Cloneable{
         }
         for(Point p: vertices){
             if (generator.nextDouble()<parameters.amount) {
-                p.mutate(parameters.vertexShift);
+                p.mutate(parameters);
             }
         }
         if (generator.nextDouble()<parameters.amount) {
@@ -95,7 +99,7 @@ public class Polygon implements Cloneable{
         color = new Color(Math.max(Math.min(color.getRed()+generator.nextGaussian()*amount,1),0),
                 Math.max(Math.min(color.getGreen()+generator.nextGaussian()*amount,1),0),
                 Math.max(Math.min(color.getBlue()+generator.nextGaussian()*amount,1),0),
-                Math.max(Math.min(color.getOpacity()+generator.nextGaussian()*amount,0.8),0.1)
+                Math.max(Math.min(color.getOpacity()+generator.nextGaussian()*amount,1),0)
                 //0.3
         );
     }
