@@ -49,16 +49,25 @@ public class EvolutionController{
         return nextGen.getBest().getCost();
     }
 
-    public void start(int genSize, int parentsNum, MutationParameters params) throws Exception{
-        if(owner == null) throw new Exception("you need to specify owner first");
-        new Thread(()->{
-            while (owner.isRunning()){
-                update(genSize, parentsNum, params);
-                owner.setCurrentBest(generations.get(generations.size()-1).getBest());
-            }
-            System.out.println("thread ending");
-        }).start();
-
+    public void start(int genSize, int parentsNum, MutationParameters params, int steps){
+        if (owner != null) {
+            new Thread(() -> {
+                while (owner.isRunning()) {
+                    update(genSize, parentsNum, params);
+                    owner.setCurrentBest(getLastGen().getBest());
+                }
+                System.out.println("thread ending");
+            }).start();
+        }
+        else{
+            new Thread(() -> {
+                for(int i=0; i<steps; i++){
+                    update(genSize, parentsNum, params);
+                    owner.setCurrentBest(getLastGen().getBest());
+                }
+                System.out.println("thread ending");
+            }).start();
+        }
     }
 
 

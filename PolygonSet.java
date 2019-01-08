@@ -40,17 +40,6 @@ public class PolygonSet implements Evolvable {
 
     private static Image targetImage;
     Random generator = new Random();
-//    public void mutate(double amount){
-//        if(polygons.size()>1) {
-//            if (generator.nextDouble() < amount*10) {
-//                removeRandomPolygon();
-//            }
-//        }
-//        if (generator.nextDouble()<amount*10){
-//            addRandomPolygon(new PolygonMutationParams(0,0,0,1,0,0,0,0));
-//        }
-//        for (Polygon pol: polygons) pol.mutate(amount);
-//    }
 
     public void mutate(MutationParameters params){
         PolygonMutationParams parameters = (PolygonMutationParams)params;
@@ -133,6 +122,7 @@ public class PolygonSet implements Evolvable {
         return out;
     }
     public void evaluate(){
+        if (true) return;
         final javafx.scene.canvas.Canvas canvas = new Canvas(targetImage.getWidth(), targetImage.getHeight());
         final GraphicsContext gc = canvas.getGraphicsContext2D();
         drawBackground(gc);
