@@ -11,10 +11,11 @@ import javafx.scene.paint.Color;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class PolygonSet implements Evolvable {
+public class PolygonSet implements Evolvable, Serializable {
 
     public double getCost() {
         return cost;
