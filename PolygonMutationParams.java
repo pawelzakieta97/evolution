@@ -1,4 +1,6 @@
-public class PolygonMutationParams implements MutationParameters {
+import java.io.Serializable;
+
+public class PolygonMutationParams implements MutationParameters, Serializable {
     double amount;
     double addPolyChance;
     double deletePolyChance;

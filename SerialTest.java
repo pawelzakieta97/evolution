@@ -24,16 +24,44 @@ public class SerialTest {
     }
 
     public static void main(String[] args) {
-//        Color color = new Color(1,1,1,1);
-//        System.out.println(color.toString());
-        Colorado color = new Colorado(0.1, 0.1, 0.1,0.1);
-        try {
-            serialize(color, "color.txt");
-            Colorado newColor = (Colorado) deserialize("color.txt");
-            System.out.println(newColor.toString());
 
+//        this works
+//        Colorado color = new Colorado(0.1, 0.1, 0.1,0.1);
+//        try {
+//            serialize(color, "color.txt");
+//            Colorado newColor = (Colorado) deserialize("color.txt");
+//            System.out.println(newColor.toString());
+//
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+
+//        this also works
+        PolygonMutationParams params = new PolygonMutationParams(0.02, 0.05,0.025,0.1, 0.05, 0.02, 0.01, 0.05);
+        params.width=100;
+        params.height=100;
+        Polygon polygon = new Polygon(params);
+//        System.out.println(polygon.toString());
+//        try {
+//            serialize(polygon, "polygon.txt");
+//            Polygon newPoly = (Polygon) deserialize("polygon.txt");
+//            System.out.println(newPoly.toString());
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+
+        PolygonSet entity = new PolygonSet();
+        entity.recentParams = params;
+        entity.polygons.add(new Polygon(params));
+        try {
+            serialize(entity, "polySet.txt");
+            PolygonSet newEntity = (PolygonSet) deserialize("polySet.txt");
+            System.out.println(newEntity.toString()+"zrobione");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
+
+
+
 }

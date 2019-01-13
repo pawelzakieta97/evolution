@@ -39,7 +39,7 @@ public class PolygonSet implements Evolvable, Serializable {
         PolygonSet.targetImage = targetImage;
     }
 
-    private static Image targetImage;
+    private transient static Image targetImage;
     Random generator = new Random();
 
     public void mutate(MutationParameters params){

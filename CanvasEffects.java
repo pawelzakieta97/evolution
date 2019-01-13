@@ -32,9 +32,12 @@ public class CanvasEffects extends Application {
         p1list.add(new Point(100, 150));
         int[] x = {100, 150, 150, 100};
         int[] y = {100, 100, 150, 150};
-        Polygon p1 = new Polygon(x, y, 4, Color.color(1,0,0,0.5));
-        Polygon p2 = new Polygon(x, y, 4, Color.color(0,0,0,0.5));
-        Polygon p3 = new Polygon(x, y, 4, Color.color(0,0,1,0.5));
+//        Polygon p1 = new Polygon(x, y, 4, Color.color(1,0,0,0.5));
+//        Polygon p2 = new Polygon(x, y, 4, Color.color(0,0,0,0.5));
+//        Polygon p3 = new Polygon(x, y, 4, Color.color(0,0,1,0.5));
+        Polygon p1 = new Polygon(x, y, 4,new Colorado(1,0,0,0.5));
+        Polygon p2 = new Polygon(x, y, 4,new Colorado(0,0,0,0.5));
+        Polygon p3 = new Polygon(x, y, 4,new Colorado(0,0,1,0.5));
         Polygon p4 = new Polygon();
 
         p1.draw(gc);

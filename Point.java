@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.Random;
 
-public class Point implements Cloneable{
+public class Point implements Cloneable, Serializable {
     int x, y;
     Random generator = new Random();
     public Point(int x, int y){

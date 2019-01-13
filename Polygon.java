@@ -2,19 +2,22 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class Polygon implements Cloneable{
+public class Polygon implements Cloneable, Serializable {
     Random generator = new Random();
     private LinkedList<Point> vertices = new LinkedList<>();
-    private Color color;
-    public Polygon(LinkedList<Point> list, Color color){
+
+//    private Color color;
+    private Colorado color;
+    public Polygon(LinkedList<Point> list, Colorado color){
         vertices = list;
         this.color = color;
     }
-    public Polygon(int[] x, int[] y, int size, Color color){
+    public Polygon(int[] x, int[] y, int size, Colorado color){
         vertices = new LinkedList<>();
         for (int i = 0; i<size; i++){
             vertices.add(new Point(x[i], y[i]));
@@ -40,13 +43,16 @@ public class Polygon implements Cloneable{
             if(y[i]<params.ROIy) x[i]=params.ROIy;
             if(y[i]>params.ROIy+params.height) y[i] = params.ROIy+params.height;
         }
-        Color color = new Color(generator.nextDouble(),generator.nextDouble(),generator.nextDouble(),generator.nextDouble());
+
+//        Color color = new Color(generator.nextDouble(),generator.nextDouble(),generator.nextDouble(),generator.nextDouble());
+        Colorado color = new Colorado(generator.nextDouble(),generator.nextDouble(),generator.nextDouble(),generator.nextDouble());
         Polygon p = new Polygon(x,y,3,color);
         this.vertices = p.vertices;
         this.color = p.color;
     }
     public void draw(GraphicsContext gc){        //gc.setGlobalAlpha(color.getOpacity());
-        gc.setFill(color);
+//        gc.setFill(color);
+        gc.setFill(color.translateToColor());
         gc.fillPolygon(Arrays.stream(getXCoordinates()).asDoubleStream().toArray(), Arrays.stream(getYCoordinates()).asDoubleStream().toArray(),vertices.size());
     }
     public void draw(Graphics2D g2){
@@ -96,12 +102,19 @@ public class Polygon implements Cloneable{
         vertices.remove(generator.nextInt(vertices.size()));
     }
     public void mutateColor(double amount){
-        color = new Color(Math.max(Math.min(color.getRed()+generator.nextGaussian()*amount,1),0),
+        color = new Colorado(Math.max(Math.min(color.getRed()+generator.nextGaussian()*amount,1),0),
                 Math.max(Math.min(color.getGreen()+generator.nextGaussian()*amount,1),0),
                 Math.max(Math.min(color.getBlue()+generator.nextGaussian()*amount,1),0),
                 Math.max(Math.min(color.getOpacity()+generator.nextGaussian()*amount,1),0)
                 //0.3
         );
+
+//        color = new Color(Math.max(Math.min(color.getRed()+generator.nextGaussian()*amount,1),0),
+//                Math.max(Math.min(color.getGreen()+generator.nextGaussian()*amount,1),0),
+//                Math.max(Math.min(color.getBlue()+generator.nextGaussian()*amount,1),0),
+//                Math.max(Math.min(color.getOpacity()+generator.nextGaussian()*amount,1),0)
+//                //0.3
+//        );
     }
 
     public int[] getXCoordinates(){
@@ -127,7 +140,8 @@ public class Polygon implements Cloneable{
 
     public Object clone(){
         Polygon o  = new Polygon();
-        o.color = new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getOpacity());
+//        o.color = new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getOpacity());
+        o.color = new Colorado(color.getRed(), color.getGreen(), color.getBlue(), color.getOpacity());
         for(Point p: vertices){
             o.vertices.add((Point)p.clone());
         }
