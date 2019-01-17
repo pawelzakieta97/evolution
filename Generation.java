@@ -4,6 +4,8 @@ import java.util.Comparator;
 
 public class Generation {
     public ArrayList<Evolvable> population;
+    private boolean ready = false;
+    public boolean isReady(){return ready;}
 
     ArrayList<Evolvable> getBest(int n){
         if (n>population.size()) n = population.size();
@@ -33,7 +35,7 @@ public class Generation {
      */
     public void process(){
         for (Evolvable i: population){
-            i.evaluate();
+            AppThread.runAndWait(()->{i.evaluate();});
         }
         Collections.sort(population, new Comparator<Evolvable>() {
             @Override
@@ -43,6 +45,7 @@ public class Generation {
                 else return -1;
             }
         });
+        ready = true;
 
     }
 

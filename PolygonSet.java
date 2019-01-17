@@ -1,3 +1,4 @@
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -14,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 public class PolygonSet implements Evolvable, Serializable {
 
@@ -123,7 +125,7 @@ public class PolygonSet implements Evolvable, Serializable {
         return out;
     }
     public void evaluate(){
-        if (true) return;
+        //if (true) return;
         final javafx.scene.canvas.Canvas canvas = new Canvas(targetImage.getWidth(), targetImage.getHeight());
         final GraphicsContext gc = canvas.getGraphicsContext2D();
         drawBackground(gc);
@@ -172,8 +174,15 @@ public class PolygonSet implements Evolvable, Serializable {
         gc.drawImage(snap, 0,0);
         return snap;
     }
+    private Point ROI = null;
+    public Point getROIsafe(double level, Image costMap){
+        AppThread.runAndWait(()->{
+            ROI = getROI(level, costMap);
+        });
+        return ROI;
+    }
 
-    public Point getROI(int level, Image costMap){
+    public Point getROI(double level, Image costMap){
         if (costMap == null) costMap = getCostMap();
         PixelReader reader = costMap.getPixelReader();
         double[][] integral = new double[(int)costMap.getWidth()][(int)costMap.getHeight()];

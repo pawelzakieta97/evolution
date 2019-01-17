@@ -1,3 +1,5 @@
+import javafx.application.Platform;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -45,7 +47,13 @@ public class EvolutionController implements Serializable {
         nextGen.mutate(params);
         //adding previous best individuals without mutating
         nextGen.population.addAll(getLastGen().getBest(parentsNum));
-        nextGen.process();
+        //AppThread.runAndWait(()->{
+                //System.out.println("generation processing started");
+                nextGen.process();
+            //}
+        //);
+        while(!nextGen.isReady()){}
+
         generations.add(nextGen);
         return nextGen.getBest().getCost();
     }
@@ -53,9 +61,10 @@ public class EvolutionController implements Serializable {
     public void start(int genSize, int parentsNum, MutationParameters params, int steps){
         if (owner != null) {
             new Thread(() -> {
-                while (owner.isRunning()) {
+                for(int i = 0; i<steps; i++) {
                     update(genSize, parentsNum, params);
                     owner.setCurrentBest(getLastGen().getBest());
+                    if (!owner.isRunning()) break;
                 }
                 System.out.println("thread ending");
             }).start();
@@ -64,7 +73,7 @@ public class EvolutionController implements Serializable {
             new Thread(() -> {
                 for(int i=0; i<steps; i++){
                     update(genSize, parentsNum, params);
-                    owner.setCurrentBest(getLastGen().getBest());
+                    //owner.setCurrentBest(getLastGen().getBest());
                 }
                 System.out.println("thread ending");
             }).start();

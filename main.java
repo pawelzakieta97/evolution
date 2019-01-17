@@ -31,53 +31,60 @@ public class main extends Application {
         pane.setCenter(button);
 
 
+
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                PolygonSet entity = new PolygonSet();
-                PolygonMutationParams params = new PolygonMutationParams(0.02, 0.05,0.025,0.1, 0.05, 0.02, 0.01, 0.05);
-                params.width = (int)img.getWidth();
-                params.height = (int)img.getHeight();
-                entity.recentParams = params;
-                for (int i = 0; i<50; i++){
-                    entity.polygons.add(new Polygon(params));
-                }
-                double fitness = 0.5;
-                EvolutionController controller = new EvolutionController(entity);
-                for (int i = 0; i<0; i++) {
-                    params.polygonSize = Math.sqrt(fitness);
-                    controller.update(400, 2, params);
-                    controller.clear();
-                    fitness = ((PolygonSet)(controller.getLastGen().getBest())).getFitness();
-                    System.out.println(fitness+" at gen: "+i);
-                    entity = (PolygonSet)controller.getLastGen().getBest();
-                    entity.drawPolygons(gc);
+                new Thread(() -> {
+                    System.out.println(Thread.currentThread().getName());
+                    PolygonSet entity = new PolygonSet();
+                    PolygonMutationParams params = new PolygonMutationParams(0.02, 0.05,0.025,0.1, 0.05, 0.02, 0.01, 0.05);
+                    params.width = (int)img.getWidth();
+                    params.height = (int)img.getHeight();
+                    entity.setTargetImage(img);
+                    entity.recentParams = params;
+                    for (int i = 0; i<50; i++){
+                        entity.polygons.add(new Polygon(params));
+                    }
+                    double fitness = 0.5;
+                    EvolutionController controller = new EvolutionController(entity);
+                    for (int i = 0; i<100; i++) {
+                        params.polygonSize = Math.sqrt(fitness);
+                        controller.update(400, 2, params);
+                        controller.clear();
+                        fitness = ((PolygonSet)(controller.getLastGen().getBest())).getFitness();
+                        System.out.println(fitness+" at gen: "+i);
+                        entity = (PolygonSet)controller.getLastGen().getBest();
+                        entity.drawBackground(gc);
+                        entity.drawPolygons(gc);
 
-                }
-                Point ROI = entity.getROI(1,null);
-                params.ROIx = ROI.x;
-                params.ROIy = ROI.y;
-                params.width /= Math.pow(2,1);
-                params.height /= Math.pow(2,1);
-                entity.base = (PolygonSet) entity.clone();
-                entity.clearPolys();
-                System.out.println("roi: "+ROI);
-                System.out.println(entity);
+                    }
+                    Point ROI = entity.getROIsafe(1,null);
+                    params.ROIx = ROI.x;
+                    params.ROIy = ROI.y;
+                    params.width /= Math.pow(2,1);
+                    params.height /= Math.pow(2,1);
+                    entity.base = (PolygonSet) entity.clone();
+                    entity.clearPolys();
+                    System.out.println("roi: "+ROI);
+                    System.out.println(entity);
 
-                //creating one generation to copy the base to all the individuals
-                controller.update(400, 1, params);
-                for (int i = 0; i<400; i++) {
-                    params.polygonSize = Math.sqrt(fitness);
-                    controller.update(400, 2, params);
-                    controller.clear();
-                    fitness = ((PolygonSet)(controller.getLastGen().getBest())).getFitness();
-                    System.out.println(fitness+" at gen: "+i);
-                    entity = (PolygonSet)controller.getLastGen().getBest();
-                    entity.drawPolygons(gc);
+                    //creating one generation to copy the base to all the individuals
+                    controller.update(100, 1, params);
+                    for (int i = 0; i<400; i++) {
+                        params.polygonSize = Math.sqrt(fitness);
+                        controller.update(400, 2, params);
+                        controller.clear();
+                        fitness = ((PolygonSet)(controller.getLastGen().getBest())).getFitness();
+                        System.out.println(fitness+" at gen: "+i);
+                        entity = (PolygonSet)controller.getLastGen().getBest();
+                        entity.drawBackground(gc);
+                        entity.base.drawPolygons(gc);
+                        entity.drawPolygons(gc);
 
-                    //stage.setScene(new Scene(new Group(canvas)));
-                    //stage.show();
-                }
-
+                        //stage.setScene(new Scene(new Group(canvas)));
+                        //stage.show();
+                    }
+                }).start();
             }
         });
 
