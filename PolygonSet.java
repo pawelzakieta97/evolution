@@ -38,7 +38,6 @@ public class PolygonSet implements Evolvable, Serializable {
 
     public static void setTargetImage(Image targetImage) {
         PolygonSet.targetImage = targetImage;
-        PolygonSet.targetImage = targetImage;
     }
 
     private transient static Image targetImage;
@@ -102,10 +101,17 @@ public class PolygonSet implements Evolvable, Serializable {
         }
 
     }
+    public void drawROI(GraphicsContext gc){
+        double[] x = {recentParams.ROIx, recentParams.ROIx+recentParams.width, recentParams.ROIx+recentParams.width, recentParams.ROIx};
+        double[] y = {recentParams.ROIy, recentParams.ROIy,recentParams.ROIy+recentParams.height, recentParams.ROIy+recentParams.height};
+        gc.setStroke(new Color(1,0,0,1));
+        gc.strokePolygon(x,y,4);
+    }
+
     public void drawBackground(GraphicsContext gc){
         gc.setGlobalAlpha(1.0);
         gc.setFill(new Color(1,1,1,1));
-        gc.fillRect(0,0,targetImage.getWidth(), targetImage.getHeight());
+        gc.fillRect(0,0,recentParams.width, recentParams.height);
     }
     public void subtractTargetImage(GraphicsContext gc){
         BlendMode prev = gc.getGlobalBlendMode();
@@ -140,8 +146,8 @@ public class PolygonSet implements Evolvable, Serializable {
         PixelReader reader = snap.getPixelReader();
         cost = 0;
 
-        for (int y=recentParams.ROIy; y<recentParams.ROIy+recentParams.height; y+=2){
-            for (int x=recentParams.ROIx; x<recentParams.ROIx+recentParams.width; x+=2){
+        for (int y=recentParams.ROIy; y<recentParams.ROIy+recentParams.height; y+=1){
+            for (int x=recentParams.ROIx; x<recentParams.ROIx+recentParams.width; x+=1){
                 Color sample = reader.getColor(x,y);
                 cost+=(sample.getBlue()*sample.getBlue()+sample.getGreen()*sample.getGreen()+sample.getRed()*sample.getRed())/3;
             }
@@ -164,6 +170,7 @@ public class PolygonSet implements Evolvable, Serializable {
     public WritableImage getCostMap(){
         final javafx.scene.canvas.Canvas canvas = new Canvas(recentParams.width, recentParams.height);
         final GraphicsContext gc = canvas.getGraphicsContext2D();
+        drawBackground(gc);
         if (base != null) base.drawPolygons(gc);
         drawPolygons(gc);
         subtractTargetImage(gc);
@@ -217,5 +224,21 @@ public class PolygonSet implements Evolvable, Serializable {
 
     static double colorBrightness(Color sample){
         return (sample.getBlue()*sample.getBlue()+sample.getGreen()*sample.getGreen()+sample.getRed()*sample.getRed())/3;
+    }
+
+    public void setScale(double scale){
+        for (Polygon p: polygons) p.setScale(scale);
+        recentParams.ROIx*=scale;
+        recentParams.ROIy*=scale;
+        recentParams.width*=scale;
+        recentParams.height*=scale;
+    }
+
+
+    public void merge(){
+        if (base == null) return;
+        base.polygons.addAll(polygons);
+        polygons = base.polygons;
+        base = null;
     }
 }

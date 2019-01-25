@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class main extends Application {
@@ -22,7 +23,8 @@ public class main extends Application {
     static public Image img;
     public void start(Stage stage) {
         stage.setTitle("BufferedImageTest");
-        img = new Image("girl.png");
+        img = new Image("FILE:///C:/img/girl.png");
+        //img = (Image)f;
         final Canvas canvas = new Canvas(img.getWidth(),img.getHeight());
         gc = canvas.getGraphicsContext2D();
 
@@ -37,18 +39,18 @@ public class main extends Application {
                 new Thread(() -> {
                     System.out.println(Thread.currentThread().getName());
                     PolygonSet entity = new PolygonSet();
-                    PolygonMutationParams params = new PolygonMutationParams(0.02, 0.05,0.025,0.1, 0.05, 0.02, 0.01, 0.05);
+                    PolygonMutationParams params = new PolygonMutationParams(0.02, 0.05,0.025,0.4, 0.05, 0.02, 0.01, 0.05);
                     params.width = (int)img.getWidth();
                     params.height = (int)img.getHeight();
                     entity.setTargetImage(img);
                     entity.recentParams = params;
-                    for (int i = 0; i<50; i++){
+                    for (int i = 0; i<0; i++){
                         entity.polygons.add(new Polygon(params));
                     }
                     double fitness = 0.5;
                     EvolutionController controller = new EvolutionController(entity);
                     for (int i = 0; i<100; i++) {
-                        params.polygonSize = Math.sqrt(fitness);
+                        params.polygonSize = Math.sqrt(1-fitness);
                         controller.update(400, 2, params);
                         controller.clear();
                         fitness = ((PolygonSet)(controller.getLastGen().getBest())).getFitness();
@@ -71,7 +73,7 @@ public class main extends Application {
                     //creating one generation to copy the base to all the individuals
                     controller.update(100, 1, params);
                     for (int i = 0; i<400; i++) {
-                        params.polygonSize = Math.sqrt(fitness);
+                        //params.polygonSize = Math.sqrt(1-fitness);
                         controller.update(400, 2, params);
                         controller.clear();
                         fitness = ((PolygonSet)(controller.getLastGen().getBest())).getFitness();

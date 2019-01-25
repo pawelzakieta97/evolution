@@ -47,12 +47,7 @@ public class EvolutionController implements Serializable {
         nextGen.mutate(params);
         //adding previous best individuals without mutating
         nextGen.population.addAll(getLastGen().getBest(parentsNum));
-        //AppThread.runAndWait(()->{
-                //System.out.println("generation processing started");
                 nextGen.process();
-            //}
-        //);
-        while(!nextGen.isReady()){}
 
         generations.add(nextGen);
         return nextGen.getBest().getCost();

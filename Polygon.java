@@ -13,6 +13,7 @@ public class Polygon implements Cloneable, Serializable {
 
 //    private Color color;
     private Colorado color;
+    private int maxVertex = 7;
     public Polygon(LinkedList<Point> list, Colorado color){
         vertices = list;
         this.color = color;
@@ -94,6 +95,7 @@ public class Polygon implements Cloneable, Serializable {
     }
 
     public void addRandomVertex(){
+        if (vertices.size()==maxVertex) return;
         int num = generator.nextInt(vertices.size()-2)+1;
         vertices.add(num, Point.middle(vertices.get(num), vertices.get(num-1)));
     }
@@ -154,5 +156,11 @@ public class Polygon implements Cloneable, Serializable {
             out = out+p;
         }
         return out;
+    }
+    public void setScale(double scale){
+        for (Point p: vertices){
+            p.x = (int)(p.x*scale);
+            p.y = (int)(p.y*scale);
+        }
     }
 }
