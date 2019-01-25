@@ -9,8 +9,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -18,6 +17,7 @@ import javafx.stage.FileChooser;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -150,7 +150,7 @@ public class Controller implements Initializable {
         imgNum = 0;
         genNum = 0;
         entity = new PolygonSet();
-        scale = 3;
+        scale = 0.3;
     }
 
     @Override
@@ -274,8 +274,8 @@ public class Controller implements Initializable {
         if (rImage.getImage()==null) return;
         this.runningRequest = true;
         new Thread(() -> {
-            Image img = rImage.getImage();
-            final javafx.scene.canvas.Canvas canvas = new Canvas(img.getWidth()*scale,img.getHeight()*scale);
+            Image img = resampleImage(rImage.getImage(), scale);
+            final javafx.scene.canvas.Canvas canvas = new Canvas(rImage.getImage().getWidth(),rImage.getImage().getHeight());
             GraphicsContext gc = canvas.getGraphicsContext2D();
             this.lImage.setFitWidth(320);
             this.lImage.setPreserveRatio(true);
@@ -288,11 +288,6 @@ public class Controller implements Initializable {
             if(this.nowRoi != 0){
                 entity.base = (PolygonSet) entity.clone();
                 entity.clearPolys();
-            }
-
-            //adding some random polyogns before starting evolution
-            for (int i = 0; i<0; i++){
-                entity.polygons.add(new Polygon(params));
             }
             double fitness = 0.5;
 
@@ -323,14 +318,17 @@ public class Controller implements Initializable {
                 controller.clear();
                 fitness = ((PolygonSet)(controller.getLastGen().getBest())).getFitness();
                 System.out.println(fitness+" at gen: "+this.genNum);
-                entity = (PolygonSet)((PolygonSet)controller.getLastGen().getBest()).clone();
-                entity.setScale(scale);
-                entity.drawBackground(gc);
-                if(entity.base != null) entity.base.drawPolygons(gc);
-                entity.drawPolygons(gc);
-                entity.drawROI(gc);
+                entity = (PolygonSet)controller.getLastGen().getBest();
+                PolygonSet entityDisplay = (PolygonSet)((PolygonSet)controller.getLastGen().getBest()).clone();
+                entityDisplay.setScale(1/scale);
+                entityDisplay.drawBackground(gc, scale);
+                if(entityDisplay.base != null) entityDisplay.base.drawPolygons(gc);
+                entityDisplay.drawPolygons(gc);
+                entityDisplay.drawROI(gc);
                 AppThread.runAndWait(()->this.lImage.setImage(canvas.snapshot(null, null)));
                 genNum ++;
+
+                //this.runningRequest = false;
             }
             running = false;
         }).start();
@@ -344,7 +342,7 @@ public class Controller implements Initializable {
         System.out.println("bla");
         entity = new PolygonSet();
         genNum = 0;
-        rImage.setImage(null);
+        //rImage.setImage(null);
         lImage.setImage(null);
     }
 
@@ -863,5 +861,19 @@ public class Controller implements Initializable {
         int i = dir.length()-1;
         while(dir.charAt(i)!='\\') i--;
         return dir.substring(0,i);
+    }
+
+    static Image resampleImage(Image image, double scale){
+        int xMax = (int)(image.getWidth()*scale);
+        int yMax = (int)(image.getHeight()*scale);
+        WritableImage output = new WritableImage(xMax,yMax);
+        PixelReader reader = image.getPixelReader();
+        PixelWriter writer = output.getPixelWriter();
+        for(int x=0; x<xMax; x++){
+            for(int y=0; y<yMax; y++){
+                writer.setColor(x,y,reader.getColor((int)(x/scale),(int)(y/scale)));
+            }
+        }
+        return output;
     }
 }

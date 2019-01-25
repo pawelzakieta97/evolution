@@ -111,7 +111,12 @@ public class PolygonSet implements Evolvable, Serializable {
     public void drawBackground(GraphicsContext gc){
         gc.setGlobalAlpha(1.0);
         gc.setFill(new Color(1,1,1,1));
-        gc.fillRect(0,0,recentParams.width, recentParams.height);
+        gc.fillRect(0,0,targetImage.getWidth(), targetImage.getHeight());
+    }
+    public void drawBackground(GraphicsContext gc, double scale){
+        gc.setGlobalAlpha(1.0);
+        gc.setFill(new Color(1,1,1,1));
+        gc.fillRect(0,0,targetImage.getWidth()/scale, targetImage.getHeight()/scale);
     }
     public void subtractTargetImage(GraphicsContext gc){
         BlendMode prev = gc.getGlobalBlendMode();
@@ -139,9 +144,9 @@ public class PolygonSet implements Evolvable, Serializable {
         drawPolygons(gc);
         subtractTargetImage(gc);
         WritableImage snap = gc.getCanvas().snapshot(null, null);
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setSaturation(-1.0);
-        gc.setEffect(colorAdjust);
+        //ColorAdjust colorAdjust = new ColorAdjust();
+        //colorAdjust.setSaturation(-1.0);
+        //gc.setEffect(colorAdjust);
         gc.drawImage(snap, 0,0);
         PixelReader reader = snap.getPixelReader();
         cost = 0;
@@ -158,7 +163,7 @@ public class PolygonSet implements Evolvable, Serializable {
         for(Polygon polygon: polygons){
             o.polygons.add((Polygon)polygon.clone());
         }
-        o.base = base;
+        if (base!=null) o.base = (PolygonSet)base.clone();
         o.recentParams = (PolygonMutationParams)recentParams.clone();
         return o;
     }
@@ -232,6 +237,7 @@ public class PolygonSet implements Evolvable, Serializable {
         recentParams.ROIy*=scale;
         recentParams.width*=scale;
         recentParams.height*=scale;
+        if (base!=null) base.setScale(scale);
     }
 
 
