@@ -144,6 +144,9 @@ public class Controller implements Initializable {
         VERTEXSHIFT = 0.2;
         ROI = 0;
 
+        numParents = 1;
+        popSize = 100;
+
         nowRoi = 0;
         running = false;
         runningRequest = false;

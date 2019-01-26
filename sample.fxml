@@ -99,7 +99,7 @@
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="16.0" prefWidth="227.0" text="size of polygon" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="16.0" prefWidth="226.0" text="change of color" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="8" />
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="16.0" prefWidth="314.0" text="chance for adding vertex" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="10" />
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="16.0" prefWidth="277.0" text="chance for shifting vertex" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="14" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="16.0" prefWidth="277.0" text="vertex shift amount" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="14" />
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="16.0" prefWidth="274.0" text="Region Of Interest level" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="16" />
                         <TextField fx:id="fieldOne2" onKeyPressed="#enterHandle2" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <TextField fx:id="fieldOne3" onKeyPressed="#enterHandle3" GridPane.columnIndex="1" GridPane.rowIndex="7" />
@@ -139,7 +139,7 @@
                         <Button mnemonicParsing="false" onAction="#plusOnePopSize" text="+" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="19" />
                         <Button mnemonicParsing="false" onAction="#plusOneNumParents" text="+" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="21" />
                         <Button mnemonicParsing="false" onAction="#minusOneNumParents" text="-" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="21" />
-                        <Slider fx:id="slideNumParents" min="1.0" GridPane.columnIndex="3" GridPane.rowIndex="21" />
+                        <Slider fx:id="slideNumParents" max="100" min="1.0" GridPane.columnIndex="3" GridPane.rowIndex="21" />
                         <!--<Text strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" fx:id="valueOne"/>-->
                     </children>
                 </GridPane>
