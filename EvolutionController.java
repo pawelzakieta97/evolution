@@ -4,16 +4,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class EvolutionController implements Serializable {
+
+    /**
+     * the array containing all the generations
+     */
     public ArrayList<Generation> generations = new ArrayList<Generation>();
 
-    public void setOwner(ControllerInterface owner) {
-        this.owner = owner;
-    }
+    /**
+     * @return the latest generation
+     */
     public Generation getLastGen(){
         return generations.get(generations.size()-1);
     }
 
-    private ControllerInterface owner;
+    /**
+     * Constructor. Populates the initial generation with 1 individual
+     * @param origin the individual in the initial generation
+     */
     public EvolutionController(Evolvable origin){
         Generation gen0 = new Generation();
         //gen0.setSize(10);
@@ -31,16 +38,6 @@ public class EvolutionController implements Serializable {
      * @param params specifies the rate of change of individuals due to mutation
      * @return cost function value of the best individual in new generation
      */
-//    public double update(int genSize, int parentsNum, double amount){
-//        Generation nextGen = new Generation();
-//        nextGen.populate(getLastGen().getBest(parentsNum), genSize);
-//        nextGen.mutate(amount);
-//        //adding previous best individuals without mutating
-//        nextGen.population.addAll(getLastGen().getBest(parentsNum));
-//        nextGen.process();
-//        generations.add(nextGen);
-//        return nextGen.getBest().getCost();
-//    }
     public double update(int genSize, int parentsNum, MutationParameters params){
         Generation nextGen = new Generation();
         nextGen.populate(getLastGen().getBest(parentsNum), genSize);
@@ -53,29 +50,10 @@ public class EvolutionController implements Serializable {
         return nextGen.getBest().getCost();
     }
 
-    public void start(int genSize, int parentsNum, MutationParameters params, int steps){
-        if (owner != null) {
-            new Thread(() -> {
-                for(int i = 0; i<steps; i++) {
-                    update(genSize, parentsNum, params);
-                    owner.setCurrentBest(getLastGen().getBest());
-                    if (!owner.isRunning()) break;
-                }
-                System.out.println("thread ending");
-            }).start();
-        }
-        else{
-            new Thread(() -> {
-                for(int i=0; i<steps; i++){
-                    update(genSize, parentsNum, params);
-                    //owner.setCurrentBest(getLastGen().getBest());
-                }
-                System.out.println("thread ending");
-            }).start();
-        }
-    }
 
-
+    /**
+     * method used to clean the array of previous generations. It leaves only the most recent one.
+     */
     public void clear(){
         Generation gen = getLastGen();
         generations = new ArrayList<Generation>();

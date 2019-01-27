@@ -1,6 +1,4 @@
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
 import java.awt.*;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -8,10 +6,16 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class Polygon implements Cloneable, Serializable {
-    Random generator = new Random();
-    private LinkedList<Point> vertices = new LinkedList<>();
 
-//    private Color color;
+    private Random generator = new Random();
+    /**
+     * an array of vertices of the polygon
+     */
+    private LinkedList<Point> vertices = new LinkedList<>();
+    /**
+     *A class representing the color of the polygon created purely for the purpose of serialization (the generic color
+     * objects couldn't be serialized)
+     */
     private Colorado color;
     private int maxVertex = 7;
     public Polygon(LinkedList<Point> list, Colorado color){
@@ -25,12 +29,14 @@ public class Polygon implements Cloneable, Serializable {
         }
         this.color = color;
     }
-    /**
-     * constructor for creating random polygon (triangle)
-     */
     public Polygon(){
 
     }
+
+    /**
+     * constructor creating a random triangle
+     * @param params
+     */
     public Polygon(PolygonMutationParams params){
         int[] x = new int[3];
         int[] y = new int[3];
@@ -51,28 +57,20 @@ public class Polygon implements Cloneable, Serializable {
         this.vertices = p.vertices;
         this.color = p.color;
     }
-    public void draw(GraphicsContext gc){        //gc.setGlobalAlpha(color.getOpacity());
-//        gc.setFill(color);
+
+    /**
+     * draws a polygon
+     * @param gc polygon is drawn onto this graphics context
+     */
+    public void draw(GraphicsContext gc){
         gc.setFill(color.translateToColor());
         gc.fillPolygon(Arrays.stream(getXCoordinates()).asDoubleStream().toArray(), Arrays.stream(getYCoordinates()).asDoubleStream().toArray(),vertices.size());
     }
-    public void draw(Graphics2D g2){
-        java.awt.Color c = new java.awt.Color((float)color.getRed(), (float)color.getGreen(), (float)color.getBlue(), (float)color.getOpacity());
-        g2.setPaint(c);
-        g2.fillPolygon(getXCoordinates(), getYCoordinates(),vertices.size());
-    }
-//    public void mutate(double amount){
-//        if (generator.nextDouble()<amount) addRandomVertex();
-//        if (vertices.size()>3) {
-//            if (generator.nextDouble() < amount) removeRandomVertex();
-//        }
-//        for(Point p: vertices){
-//            //if (generator.nextDouble()<amount) p.mutate(amount);
-//            double multiplier = 1;
-//            p.mutate(amount*multiplier);
-//        }
-//        mutateColor(amount);
-//    }
+
+    /**
+     * Introduces slight changes into the polyogn- color and shape
+     * @param parameters specifies the probabilities and strength of mutation
+     */
     public void mutate(PolygonMutationParams parameters){
         if (generator.nextDouble()<parameters.addVertexChance) addRandomVertex();
         if (vertices.size()>3) {
@@ -87,11 +85,6 @@ public class Polygon implements Cloneable, Serializable {
             mutateColor(parameters.colorChange);
         }
 
-    }
-    public void move(int x, int y){
-        for (Point p: vertices){
-            p.move(x,y);
-        }
     }
 
     public void addRandomVertex(){
@@ -108,15 +101,8 @@ public class Polygon implements Cloneable, Serializable {
                 Math.max(Math.min(color.getGreen()+generator.nextGaussian()*amount,1),0),
                 Math.max(Math.min(color.getBlue()+generator.nextGaussian()*amount,1),0),
                 Math.max(Math.min(color.getOpacity()+generator.nextGaussian()*amount,1),0)
-                //0.3
         );
 
-//        color = new Color(Math.max(Math.min(color.getRed()+generator.nextGaussian()*amount,1),0),
-//                Math.max(Math.min(color.getGreen()+generator.nextGaussian()*amount,1),0),
-//                Math.max(Math.min(color.getBlue()+generator.nextGaussian()*amount,1),0),
-//                Math.max(Math.min(color.getOpacity()+generator.nextGaussian()*amount,1),0)
-//                //0.3
-//        );
     }
 
     public int[] getXCoordinates(){
@@ -157,6 +143,11 @@ public class Polygon implements Cloneable, Serializable {
         }
         return out;
     }
+
+    /**
+     * resizes the polygon
+     * @param scale
+     */
     public void setScale(double scale){
         for (Point p: vertices){
             p.x = (int)(p.x*scale);

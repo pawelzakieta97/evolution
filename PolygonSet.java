@@ -1,10 +1,7 @@
-import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -15,22 +12,32 @@ import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
 
 public class PolygonSet implements Evolvable, Serializable {
+
+    /**
+     * this field contains another set of polygons. Polygons contained there are considered as background and are not
+     * mutated. Field is used whenever we use ROI
+     */
+    private PolygonSet base = null;
+    private double cost=0;
+    private ArrayList<Polygon> polygons = new ArrayList<>();
+    private transient static Image targetImage;
+    private Random generator = new Random();
+    private PolygonMutationParams recentParams;
+
+    public PolygonSet getBase() {
+        return base;
+    }
+
+    public void setBase(PolygonSet base) {
+        this.base = base;
+    }
 
     public double getCost() {
         return cost;
     }
 
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    private double cost=0;
-    public ArrayList<Polygon> polygons = new ArrayList<>();
-    public PolygonSet base = null;
-    public PolygonMutationParams recentParams;
 
     public static Image getTargetImage() {
         return targetImage;
@@ -39,10 +46,31 @@ public class PolygonSet implements Evolvable, Serializable {
     public static void setTargetImage(Image targetImage) {
         PolygonSet.targetImage = targetImage;
     }
+    public PolygonMutationParams getRecentParams() {
+        return recentParams;
+    }
 
-    private transient static Image targetImage;
-    Random generator = new Random();
+    public void setRecentParams(PolygonMutationParams recentParams) {
+        this.recentParams = recentParams;
+    }
+    public void addPolygon(Polygon p){
+        polygons.add(p);
+    }
 
+    /**
+     * introduces slight modification to some of the features of the individual
+     * The allowed mutations are:
+     *  (in PolygonSet class)
+     *  add Polygon
+     *  remove polygon
+     *      (in Polygon class)
+     *      change polygon color/opacity
+     *      add vertex to polygon
+     *      remove vertex from polygon
+     *          (in Polint class)
+     *          shift position of a vertex
+     * @param params specifies the details of mutation- probability and strength of each type of mutation
+     */
     public void mutate(MutationParameters params){
         PolygonMutationParams parameters = (PolygonMutationParams)params;
         recentParams = parameters;
@@ -57,6 +85,13 @@ public class PolygonSet implements Evolvable, Serializable {
         for (Polygon pol: polygons) pol.mutate(parameters);
     }
 
+    /**
+     * generates children whose features values are copied from a random parent
+     * @param parents an array containing parent objects
+     * @param n specifies how many children you want to generate
+     * @param crossover specifies the probability of a feature being copied from other parent
+     * @return an array of new individuals
+     */
     public ArrayList<Evolvable> breed(ArrayList<Evolvable> parents, int n, double crossover){
         ArrayList<Evolvable> children = new ArrayList<>();
         for(int i = 0; i < n; i++){
@@ -82,25 +117,23 @@ public class PolygonSet implements Evolvable, Serializable {
         //System.out.println("adding random polygon");
         polygons.add(new Polygon(params));
     }
-    public BufferedImage getImage(){
-        BufferedImage bi = new BufferedImage(
-                (int)targetImage.getWidth(), (int)targetImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = bi.createGraphics();
-        for (Polygon polygon: polygons) polygon.draw(g);
 
-        return bi;
-    }
+    /**
+     * draws all polygons (ignoring the base)
+     * @param gc polygons are drawn onto this graphics context
+     */
     public void drawPolygons(GraphicsContext gc){
-        //gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         gc.setGlobalAlpha(1.0);
-        //gc.setFill(new Color(1,1,1,1));
-        //gc.fillRect(0,0,targetImage.getWidth(), targetImage.getHeight());
         for (Polygon polygon: polygons){
-            //System.out.println("drawing polygon");
             polygon.draw(gc);
         }
 
     }
+
+    /**
+     * draws a red rectangle around the currently considered area (Region of Interest)
+     * @param gc rectangle is drawn onto this graphics context
+     */
     public void drawROI(GraphicsContext gc){
         double[] x = {recentParams.ROIx, recentParams.ROIx+recentParams.width, recentParams.ROIx+recentParams.width, recentParams.ROIx};
         double[] y = {recentParams.ROIy, recentParams.ROIy,recentParams.ROIy+recentParams.height, recentParams.ROIy+recentParams.height};
@@ -108,25 +141,35 @@ public class PolygonSet implements Evolvable, Serializable {
         gc.strokePolygon(x,y,4);
     }
 
+    /**
+     * draws white background
+     * @param gc background is drawn onto this graphics context
+     */
     public void drawBackground(GraphicsContext gc){
         gc.setGlobalAlpha(1.0);
         gc.setFill(new Color(1,1,1,1));
         gc.fillRect(0,0,targetImage.getWidth(), targetImage.getHeight());
     }
+    /**
+     * draws white background. Allows to draw the background with different resolution than the target image.
+     * Used when you want to change the scale of image created with polygons
+     * @param gc background is drawn onto this graphics context
+     */
     public void drawBackground(GraphicsContext gc, double scale){
         gc.setGlobalAlpha(1.0);
         gc.setFill(new Color(1,1,1,1));
         gc.fillRect(0,0,targetImage.getWidth()/scale, targetImage.getHeight()/scale);
     }
+
+    /**
+     * draws the target image with DIFFERENCE blending mode
+     * @param gc target image is drawn onto this graphics context
+     */
     public void subtractTargetImage(GraphicsContext gc){
         BlendMode prev = gc.getGlobalBlendMode();
         gc.setGlobalBlendMode(BlendMode.DIFFERENCE);
         gc.drawImage(targetImage, 0,0);
         gc.setGlobalBlendMode(prev);
-    }
-    public Image awt2fx(BufferedImage src){
-        WritableImage image = SwingFXUtils.toFXImage(src, null);
-        return image;
     }
     public String toString(){
         String out = "";
@@ -135,6 +178,11 @@ public class PolygonSet implements Evolvable, Serializable {
         }
         return out;
     }
+
+    /**
+     * calculates and updates the cost field. It draws background, polygons in base and original object and subtracts
+     * the target image. Then, the image is rendered and the squared values of each pixel are summed.
+     */
     public void evaluate(){
         //if (true) return;
         final javafx.scene.canvas.Canvas canvas = new Canvas(targetImage.getWidth(), targetImage.getHeight());
@@ -144,9 +192,6 @@ public class PolygonSet implements Evolvable, Serializable {
         drawPolygons(gc);
         subtractTargetImage(gc);
         WritableImage snap = gc.getCanvas().snapshot(null, null);
-        //ColorAdjust colorAdjust = new ColorAdjust();
-        //colorAdjust.setSaturation(-1.0);
-        //gc.setEffect(colorAdjust);
         gc.drawImage(snap, 0,0);
         PixelReader reader = snap.getPixelReader();
         cost = 0;
@@ -154,7 +199,8 @@ public class PolygonSet implements Evolvable, Serializable {
         for (int y=recentParams.ROIy; y<recentParams.ROIy+recentParams.height; y+=1){
             for (int x=recentParams.ROIx; x<recentParams.ROIx+recentParams.width; x+=1){
                 Color sample = reader.getColor(x,y);
-                cost+=(sample.getBlue()*sample.getBlue()+sample.getGreen()*sample.getGreen()+sample.getRed()*sample.getRed())/3;
+                cost+=colorBrightness(sample);
+                //cost+=(sample.getBlue()*sample.getBlue()+sample.getGreen()*sample.getGreen()+sample.getRed()*sample.getRed())/3;
             }
         }
     }
@@ -168,10 +214,18 @@ public class PolygonSet implements Evolvable, Serializable {
         return o;
     }
 
+    /**
+     * Converts cost value into fitness value from range (0,1)
+     * @return
+     */
     public double getFitness(){
         return 1.0-cost/recentParams.width/recentParams.height;
     }
 
+    /**
+     * generates cost map- the difference image between target image and current result
+     * @return
+     */
     public WritableImage getCostMap(){
         final javafx.scene.canvas.Canvas canvas = new Canvas(recentParams.width, recentParams.height);
         final GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -186,6 +240,10 @@ public class PolygonSet implements Evolvable, Serializable {
         gc.drawImage(snap, 0,0);
         return snap;
     }
+
+    /**
+     *
+     */
     private Point ROI = null;
     public Point getROIsafe(double level, Image costMap){
         AppThread.runAndWait(()->{
@@ -194,6 +252,14 @@ public class PolygonSet implements Evolvable, Serializable {
         return ROI;
     }
 
+    /**
+     * returns the upper left corner of the Region of Interest. The method generates the integral image in order to
+     * speed up the calculation of the sum of pixel values inside a given rectangle
+     * @param level specifies the size of least accurate region- 0 is the original image, 1 is half the dimensions etc
+     * @param costMap a map on which the least accurate region is searched. If left as null, the cost map is generated
+     *                based on the object
+     * @return
+     */
     public Point getROI(double level, Image costMap){
         if (costMap == null) costMap = getCostMap();
         PixelReader reader = costMap.getPixelReader();
@@ -231,6 +297,10 @@ public class PolygonSet implements Evolvable, Serializable {
         return (sample.getBlue()*sample.getBlue()+sample.getGreen()*sample.getGreen()+sample.getRed()*sample.getRed())/3;
     }
 
+    /**
+     * Changes the scale of the polygons
+     * @param scale size multiplier
+     */
     public void setScale(double scale){
         for (Polygon p: polygons) p.setScale(scale);
         recentParams.ROIx*=scale;
@@ -240,7 +310,9 @@ public class PolygonSet implements Evolvable, Serializable {
         if (base!=null) base.setScale(scale);
     }
 
-
+    /**
+     * merges polygons with the polygons of the base
+     */
     public void merge(){
         if (base == null) return;
         base.polygons.addAll(polygons);

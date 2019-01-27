@@ -51,8 +51,8 @@ public class SerialTest {
 //        }
 
         PolygonSet entity = new PolygonSet();
-        entity.recentParams = params;
-        entity.polygons.add(new Polygon(params));
+        entity.setRecentParams(params);
+        entity.addPolygon(new Polygon(params));
         try {
             serialize(entity, "polySet.txt");
             PolygonSet newEntity = (PolygonSet) deserialize("polySet.txt");

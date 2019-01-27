@@ -43,9 +43,9 @@ public class main extends Application {
                     params.width = (int)img.getWidth();
                     params.height = (int)img.getHeight();
                     entity.setTargetImage(img);
-                    entity.recentParams = params;
+                    entity.setRecentParams(params);
                     for (int i = 0; i<0; i++){
-                        entity.polygons.add(new Polygon(params));
+                        entity.addPolygon(new Polygon(params));
                     }
                     double fitness = 0.5;
                     EvolutionController controller = new EvolutionController(entity);
@@ -65,7 +65,7 @@ public class main extends Application {
                     params.ROIy = ROI.y;
                     params.width /= Math.pow(2,1);
                     params.height /= Math.pow(2,1);
-                    entity.base = (PolygonSet) entity.clone();
+                    entity.setBase((PolygonSet) entity.clone());
                     entity.clearPolys();
                     System.out.println("roi: "+ROI);
                     System.out.println(entity);
@@ -80,7 +80,7 @@ public class main extends Application {
                         System.out.println(fitness+" at gen: "+i);
                         entity = (PolygonSet)controller.getLastGen().getBest();
                         entity.drawBackground(gc);
-                        entity.base.drawPolygons(gc);
+                        entity.getBase().drawPolygons(gc);
                         entity.drawPolygons(gc);
 
                         //stage.setScene(new Scene(new Group(canvas)));

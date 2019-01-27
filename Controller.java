@@ -285,11 +285,11 @@ public class Controller implements Initializable {
             System.out.println(Thread.currentThread().getName());
             params.width = (int)img.getWidth();
             params.height = (int)img.getHeight();
-            entity.recentParams = params;
+            entity.setRecentParams(params);
             entity.setTargetImage(img);
             entity.merge();
             if(this.nowRoi != 0){
-                entity.base = (PolygonSet) entity.clone();
+                entity.setBase((PolygonSet) entity.clone());
                 entity.clearPolys();
             }
             double fitness = 0.5;
@@ -325,7 +325,7 @@ public class Controller implements Initializable {
                 PolygonSet entityDisplay = (PolygonSet)((PolygonSet)controller.getLastGen().getBest()).clone();
                 entityDisplay.setScale(1/scale);
                 entityDisplay.drawBackground(gc, scale);
-                if(entityDisplay.base != null) entityDisplay.base.drawPolygons(gc);
+                if(entityDisplay.getBase() != null) entityDisplay.getBase().drawPolygons(gc);
                 entityDisplay.drawPolygons(gc);
                 entityDisplay.drawROI(gc);
                 AppThread.runAndWait(()->this.lImage.setImage(canvas.snapshot(null, null)));
