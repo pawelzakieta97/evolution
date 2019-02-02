@@ -65,6 +65,7 @@ public class Controller implements Initializable {
     }
 
     private boolean running;
+    private boolean runningScale;
     private boolean runningRequest;
     private int imgNum;
     private static int xChartCount;
@@ -236,7 +237,7 @@ public class Controller implements Initializable {
         fieldScaling.setText(Double.toString(scale));
         slideScaling.setValue(scale);
         slideScaling.valueProperty().addListener((observable, oldValue, newValue) ->{
-            if (!running) {
+            if (!runningScale) {
                 scale = newValue.doubleValue();
                 fieldScaling.setText(Double.toString(newValue.doubleValue()));
 //                if (entity != null){
@@ -244,6 +245,8 @@ public class Controller implements Initializable {
 //                    entity.setScale(newValue.doubleValue()/oldValue.doubleValue());
 //                }
             }
+            else
+                slideScaling.setValue(scale);
         });
 
 
@@ -258,6 +261,7 @@ public class Controller implements Initializable {
         if (runningRequest) return;
         if (rImage.getImage()==null) return;
         this.runningRequest = true;
+        runningScale = true;
         new Thread(() -> {
             System.out.println(scale);
             Image img = resampleImage(rImage.getImage(), scale);
@@ -358,6 +362,7 @@ public class Controller implements Initializable {
             System.out.println("STOP");
             saveImg();
             runningRequest = false;
+            runningScale = false;
         }
     }
 
@@ -530,7 +535,7 @@ public class Controller implements Initializable {
 //
     @FXML
     protected void minusOneScaling(ActionEvent event) {
-        if (!running) {
+        if (!runningScale) {
             if (scale<=0)
                 return;
             scale-=0.01;
@@ -542,7 +547,7 @@ public class Controller implements Initializable {
 
     @FXML
     protected void plusOneScaling(ActionEvent event) {
-        if (!running) {
+        if (!runningScale) {
             if (scale > 1)
                 return;
             scale+=0.01;
@@ -554,7 +559,7 @@ public class Controller implements Initializable {
 
     @FXML
     protected void enterScaling(KeyEvent event) {
-        if (!running) {
+        if (!runningScale) {
             if (event.getCode() == KeyCode.ENTER) {
                 double pom = Double.parseDouble(fieldScaling.getText());
                 if (pom <= 0 || pom > 1)
@@ -563,6 +568,8 @@ public class Controller implements Initializable {
                 slideScaling.setValue(scale);
             }
         }
+        else
+            fieldScaling.setText(""+scale);
     }
 
 
