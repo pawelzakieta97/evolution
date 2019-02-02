@@ -6,9 +6,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -303,10 +300,12 @@ public class PolygonSet implements Evolvable, Serializable {
      */
     public void setScale(double scale){
         for (Polygon p: polygons) p.setScale(scale);
-        recentParams.ROIx*=scale;
-        recentParams.ROIy*=scale;
-        recentParams.width*=scale;
-        recentParams.height*=scale;
+        if (recentParams!=null) {
+            recentParams.ROIx *= scale;
+            recentParams.ROIy *= scale;
+            recentParams.width *= scale;
+            recentParams.height *= scale;
+        }
         if (base!=null) base.setScale(scale);
     }
 

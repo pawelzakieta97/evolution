@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--<?import com.gluonhq.charm.glisten.control.TextField?>-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="350.0" maxWidth="600.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="advancedSliderController">
+   <children>
+      <GridPane maxHeight="350.0" maxWidth="600.0" minHeight="350.0" minWidth="400.0" prefHeight="350.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.0" minWidth="10.0" prefWidth="61.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="356.0" minWidth="10.0" prefWidth="350.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="127.0" minWidth="10.0" prefWidth="66.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="127.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="266.0" minHeight="10.0" prefHeight="266.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#minusOneAddPoly" text="-" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#plusOneAddPoly" text="+" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Slider fx:id="sliderAddPoly" blockIncrement="0.1" max="0.2" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="chance of adding polygon" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+            <TextField fx:id="fieldAddPoly" onKeyPressed="#enterAddPoly" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="chance of deleting polygon" textAlignment="CENTER" wrappingWidth="356.611328125" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="size of polygon" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="change of colour" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="chance of adding vertex" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="chance of deleting vertex" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="chance of shifting vertex" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
+            <TextField fx:id="fieldDelPoly" onKeyPressed="#enterDelPoly" GridPane.rowIndex="3" />
+            <TextField fx:id="fieldPolySize" onKeyPressed="#enterPolySize" GridPane.rowIndex="5" />
+            <TextField fx:id="fieldChangeCol" onKeyPressed="#enterChangeCol" GridPane.rowIndex="7" />
+            <TextField fx:id="fieldAddVertex" onKeyPressed="#enterAddVertex" GridPane.rowIndex="9" />
+            <TextField fx:id="fieldDelVertex" onKeyPressed="#enterDelVertex" GridPane.rowIndex="11" />
+            <TextField fx:id="fieldShiftVertex" onKeyPressed="#enterShiftVertex" GridPane.rowIndex="13" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#minusOneDelPoly" text="-" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#minusOnePolySize" text="-" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#minusOneChangeCol" text="-" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#minusOneAddVertex" text="-" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#minusOneDelVertex" text="-" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#minusOneShiftVertex" text="-" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#plusOneDelPoly" text="+" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#plusOnePolySize" text="+" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#plusOneChangeCol" text="+" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#plusOneAddVertex" text="+" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#plusOneDelVertex" text="+" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#plusOneShiftVertex" text="+" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
+            <Slider fx:id="sliderDelPoly" blockIncrement="0.1" max="0.2" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Slider fx:id="sliderPolySize" blockIncrement="0.1" max="0.5" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Slider fx:id="sliderChangeCol" blockIncrement="0.1" max="0.2" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+            <Slider fx:id="sliderAddVertex" blockIncrement="0.1" max="0.2" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+            <Slider fx:id="sliderDelVertex" blockIncrement="0.1" max="0.2" GridPane.columnIndex="2" GridPane.rowIndex="11" />
+            <Slider fx:id="sliderShiftVertex" blockIncrement="0.1" max="0.2" GridPane.columnIndex="2" GridPane.rowIndex="13" />
+         </children>
+      </GridPane>
+   </children>
+</VBox>

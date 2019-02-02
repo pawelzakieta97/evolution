@@ -3,17 +3,24 @@
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -36,27 +43,30 @@ public class Controller implements Initializable {
     final double VERTEXSHIFT;
     final double ROI;
 
+    public PolygonMutationParams getParams() {
+        return params;
+    }
+
     private PolygonMutationParams params = new PolygonMutationParams(0.02,0.05,0.025,0.2,0.05,0.04,0.02,0.05);
-//    private double nowAmount;
-//    private double nowChAddPol;
-//    private double nowChDelPol;
-//    private double nowPolSize;
-//    private double nowColChange;
-//    private double nowChAddVer;
-//    private double nowChDelVer;
-//    private double nowShVer;
+
     private double nowRoi;
     private int numParents;
     private int popSize;
+    private double prevScale;
     private double scale;
 
     private String path;
     private int genNum;
     private PolygonSet entity;
 
+    public boolean isRunning() {
+        return running;
+    }
+
     private boolean running;
     private boolean runningRequest;
     private int imgNum;
+    private static int xChartCount;
 
     @FXML
     private TextField fieldOne;
@@ -91,6 +101,8 @@ public class Controller implements Initializable {
     @FXML
     private TextField fieldNumParents;
 
+    @FXML
+    private TextField fieldScaling;
 
     @FXML
     private Slider slideOne;
@@ -126,10 +138,27 @@ public class Controller implements Initializable {
     private Slider slideNumParents;
 
     @FXML
+    private Slider slideScaling;
+
+
+    @FXML
     private ImageView rImage;
 
     @FXML
     private ImageView lImage;
+
+    @FXML
+    private NumberAxis xAxis;
+
+    @FXML
+    private NumberAxis yAxis;
+
+
+    @FXML
+    private LineChart<Number, Number> Ch;
+
+    private LineChart.Series<Number, Number> series = new LineChart.Series<Number, Number>();
+
 
 //    private LinkedList<Polygon> = new LinkedList<Polygon>();
 
@@ -143,6 +172,7 @@ public class Controller implements Initializable {
         VERTEXDEL = 0.2;
         VERTEXSHIFT = 0.2;
         ROI = 0;
+        xChartCount = 1;
 
         numParents = 1;
         popSize = 100;
@@ -154,10 +184,29 @@ public class Controller implements Initializable {
         genNum = 0;
         entity = new PolygonSet();
         scale = 0.3;
+        prevScale = 0.3;
     }
 
     @Override
     public void initialize(URL var1, ResourceBundle var2) {
+
+        xAxis.setAutoRanging(false);
+        xAxis.setLowerBound(0);
+        xAxis.setUpperBound(10);
+        xAxis.setTickUnit(1);
+
+        yAxis.setAutoRanging(false);
+        yAxis.setLowerBound(0);
+        yAxis.setUpperBound(1.2);
+        yAxis.setTickUnit(0.1);
+
+        series.getData().add(new LineChart.Data<Number, Number>(xChartCount, 0.8));
+        xChartCount++;
+        Ch.setCreateSymbols(false);
+        Ch.setAnimated(false);
+        Ch.getData().add(series);
+
+
         slideOne.setMax(AMOUNT);
         slideOne.setBlockIncrement(AMOUNT/100);
         fieldOne.setText(((Double)params.amount).toString());
@@ -168,75 +217,75 @@ public class Controller implements Initializable {
             }
         });
 
-        slideOne1.setMax(ADDPOLYCHANCE);
-        slideOne1.setBlockIncrement(ADDPOLYCHANCE/100);
-        fieldOne1.setText(((Double)params.addPolyChance).toString());
-        slideOne1.valueProperty().addListener((observable, oldValue, newValue) ->{
-            if (!running) {
-                params.addPolyChance = newValue.doubleValue();
-                fieldOne1.setText(Double.toString(newValue.doubleValue()));
-            }
-        });
-
-        slideOne2.setMax(DELPOLYCHANCE);
-        slideOne2.setBlockIncrement(DELPOLYCHANCE/100);
-        fieldOne2.setText(((Double)params.deletePolyChance).toString());
-        slideOne2.valueProperty().addListener((observable, oldValue, newValue) ->{
-            if (!running) {
-                params.deletePolyChance = newValue.doubleValue();
-                fieldOne2.setText(Double.toString(newValue.doubleValue()));
-            }
-        });
-
-        slideOne3.setMax(POLYSIZE);
-        slideOne3.setBlockIncrement(POLYSIZE/100);
-        fieldOne3.setText(((Double)params.polygonSize).toString());
-        slideOne3.valueProperty().addListener((observable, oldValue, newValue) ->{
-            if (!running) {
-                params.polygonSize = newValue.doubleValue();
-                fieldOne3.setText(Double.toString(newValue.doubleValue()));
-            }
-        });
-
-        slideOne4.setMax(COLCHANGE);
-        slideOne4.setBlockIncrement(COLCHANGE/100);
-        fieldOne4.setText(((Double)params.colorChange).toString());
-        slideOne4.valueProperty().addListener((observable, oldValue, newValue) ->{
-            if (!running) {
-                params.colorChange = newValue.doubleValue();
-                fieldOne4.setText(Double.toString(newValue.doubleValue()));
-            }
-        });
-
-        slideOne5.setMax(VERTEXADD);
-        slideOne5.setBlockIncrement(VERTEXADD/100);
-        fieldOne5.setText(((Double)params.addVertexChance).toString());
-        slideOne5.valueProperty().addListener((observable, oldValue, newValue) ->{
-            if (!running) {
-                params.addVertexChance = newValue.doubleValue();
-                fieldOne5.setText(Double.toString(newValue.doubleValue()));
-            }
-        });
-
-        slideOne6.setMax(VERTEXDEL);
-        slideOne6.setBlockIncrement(VERTEXDEL/100);
-        fieldOne6.setText(((Double)params.deleteVertexChance).toString());
-        slideOne6.valueProperty().addListener((observable, oldValue, newValue) ->{
-            if (!running) {
-                params.deleteVertexChance = newValue.doubleValue();
-                fieldOne6.setText(Double.toString(newValue.doubleValue()));
-            }
-        });
-
-        slideOne7.setMax(VERTEXSHIFT);
-        slideOne7.setBlockIncrement(VERTEXSHIFT/100);
-        fieldOne7.setText(((Double)params.vertexShift).toString());
-        slideOne7.valueProperty().addListener((observable, oldValue, newValue) ->{
-            if (!running) {
-                params.vertexShift = newValue.doubleValue();
-                fieldOne7.setText(Double.toString(newValue.doubleValue()));
-            }
-        });
+//        slideOne1.setMax(ADDPOLYCHANCE);
+//        slideOne1.setBlockIncrement(ADDPOLYCHANCE/100);
+//        fieldOne1.setText(((Double)params.addPolyChance).toString());
+//        slideOne1.valueProperty().addListener((observable, oldValue, newValue) ->{
+//            if (!running) {
+//                params.addPolyChance = newValue.doubleValue();
+//                fieldOne1.setText(Double.toString(newValue.doubleValue()));
+//            }
+//        });
+//
+//        slideOne2.setMax(DELPOLYCHANCE);
+//        slideOne2.setBlockIncrement(DELPOLYCHANCE/100);
+//        fieldOne2.setText(((Double)params.deletePolyChance).toString());
+//        slideOne2.valueProperty().addListener((observable, oldValue, newValue) ->{
+//            if (!running) {
+//                params.deletePolyChance = newValue.doubleValue();
+//                fieldOne2.setText(Double.toString(newValue.doubleValue()));
+//            }
+//        });
+//
+//        slideOne3.setMax(POLYSIZE);
+//        slideOne3.setBlockIncrement(POLYSIZE/100);
+//        fieldOne3.setText(((Double)params.polygonSize).toString());
+//        slideOne3.valueProperty().addListener((observable, oldValue, newValue) ->{
+//            if (!running) {
+//                params.polygonSize = newValue.doubleValue();
+//                fieldOne3.setText(Double.toString(newValue.doubleValue()));
+//            }
+//        });
+//
+//        slideOne4.setMax(COLCHANGE);
+//        slideOne4.setBlockIncrement(COLCHANGE/100);
+//        fieldOne4.setText(((Double)params.colorChange).toString());
+//        slideOne4.valueProperty().addListener((observable, oldValue, newValue) ->{
+//            if (!running) {
+//                params.colorChange = newValue.doubleValue();
+//                fieldOne4.setText(Double.toString(newValue.doubleValue()));
+//            }
+//        });
+//
+//        slideOne5.setMax(VERTEXADD);
+//        slideOne5.setBlockIncrement(VERTEXADD/100);
+//        fieldOne5.setText(((Double)params.addVertexChance).toString());
+//        slideOne5.valueProperty().addListener((observable, oldValue, newValue) ->{
+//            if (!running) {
+//                params.addVertexChance = newValue.doubleValue();
+//                fieldOne5.setText(Double.toString(newValue.doubleValue()));
+//            }
+//        });
+//
+//        slideOne6.setMax(VERTEXDEL);
+//        slideOne6.setBlockIncrement(VERTEXDEL/100);
+//        fieldOne6.setText(((Double)params.deleteVertexChance).toString());
+//        slideOne6.valueProperty().addListener((observable, oldValue, newValue) ->{
+//            if (!running) {
+//                params.deleteVertexChance = newValue.doubleValue();
+//                fieldOne6.setText(Double.toString(newValue.doubleValue()));
+//            }
+//        });
+//
+//        slideOne7.setMax(VERTEXSHIFT);
+//        slideOne7.setBlockIncrement(VERTEXSHIFT/100);
+//        fieldOne7.setText(((Double)params.vertexShift).toString());
+//        slideOne7.valueProperty().addListener((observable, oldValue, newValue) ->{
+//            if (!running) {
+//                params.vertexShift = newValue.doubleValue();
+//                fieldOne7.setText(Double.toString(newValue.doubleValue()));
+//            }
+//        });
 
         slideOne8.setBlockIncrement(ROI);
         slideOne8.setMax(2);
@@ -264,6 +313,18 @@ public class Controller implements Initializable {
                 fieldNumParents.setText(Integer.toString(newValue.intValue()));
             }
         });
+        fieldScaling.setText(Double.toString(scale));
+        slideScaling.valueProperty().addListener((observable, oldValue, newValue) ->{
+            if (!running) {
+                scale = newValue.doubleValue();
+                fieldScaling.setText(Double.toString(newValue.doubleValue()));
+//                if (entity != null){
+//                    System.out.println(newValue.doubleValue()/oldValue.doubleValue());
+//                    entity.setScale(newValue.doubleValue()/oldValue.doubleValue());
+//                }
+            }
+        });
+
 
     }
 
@@ -277,7 +338,10 @@ public class Controller implements Initializable {
         if (rImage.getImage()==null) return;
         this.runningRequest = true;
         new Thread(() -> {
+            System.out.println(scale);
             Image img = resampleImage(rImage.getImage(), scale);
+            entity.setScale(scale/prevScale);
+            prevScale = scale;
             final javafx.scene.canvas.Canvas canvas = new Canvas(rImage.getImage().getWidth(),rImage.getImage().getHeight());
             GraphicsContext gc = canvas.getGraphicsContext2D();
             this.lImage.setFitWidth(320);
@@ -320,6 +384,7 @@ public class Controller implements Initializable {
                 controller.update(popSize, numParents, params);
                 controller.clear();
                 fitness = ((PolygonSet)(controller.getLastGen().getBest())).getFitness();
+                chartUpd(fitness);
                 System.out.println(fitness+" at gen: "+this.genNum);
                 entity = (PolygonSet)controller.getLastGen().getBest();
                 PolygonSet entityDisplay = (PolygonSet)((PolygonSet)controller.getLastGen().getBest()).clone();
@@ -815,6 +880,96 @@ public class Controller implements Initializable {
                 slideNumParents.setValue(numParents);
             }
         }
+    }
+
+    //
+//    start code for Scaling the image
+//
+    @FXML
+    protected void minusOneScaling(ActionEvent event) {
+        if (!running) {
+            if (scale<=0)
+                return;
+            scale-=0.01;
+//          valueOne.setText(Integer.toString(nowAmount));
+            fieldScaling.setText(Double.toString(scale));
+            slideScaling.setValue(scale);
+        }
+    }
+
+    @FXML
+    protected void plusOneScaling(ActionEvent event) {
+        if (!running) {
+            if (scale > 1)
+                return;
+            scale+=0.01;
+//        valueOne.setText(Integer.toString(nowAmount));
+            fieldScaling.setText(Double.toString(scale));
+            slideScaling.setValue(scale);
+        }
+    }
+
+    @FXML
+    protected void enterScaling(KeyEvent event) {
+        if (!running) {
+            if (event.getCode() == KeyCode.ENTER) {
+                double pom = Double.parseDouble(fieldScaling.getText());
+                if (pom <= 0 || pom > 1)
+                    return;
+                scale = pom;
+                slideScaling.setValue(scale);
+            }
+        }
+    }
+
+
+
+    @FXML
+    protected void advancedButton(ActionEvent event) {
+        //Parent root;
+
+        try {
+            //root = FXMLLoader.load(getClass().getResource("advancedSliders.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("advancedSliders.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("My New Stage Title");
+            stage.setScene(new Scene((Pane) loader.load()));
+            advancedSliderController asc = loader.<advancedSliderController>getController();
+            System.out.println(asc);
+            asc.setParentController(this);
+            asc.userInit();
+            stage.show();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    protected void export(ActionEvent event) throws IOException {
+        Parent root;
+        root = FXMLLoader.load(getClass().getResource("exportPopup.fxml"));
+        Stage stage = new Stage();
+        stage.setTitle("Choose details to export");
+        stage.setScene(new Scene(root, 600, 300));
+        stage.show();
+    }
+
+    @FXML
+    protected void chartUpd(double value) {
+        if (series.getData().size() > xAxis.getUpperBound()) {
+            xAxis.setUpperBound(xAxis.getUpperBound()+1);
+        }
+        if(xChartCount>=50){
+            //series.getData().remove(0,1);
+            xAxis.setLowerBound(xChartCount-50);
+            yAxis.setLowerBound((Double)(series.getData().get(xChartCount-50).getYValue()));
+            yAxis.setUpperBound(1);
+        }
+        series.getData().add(new LineChart.Data<Number, Number>(xChartCount, value));
+        AppThread.runAndWait(()->{Ch.getData().set(0, series);});
+        xChartCount++;
     }
 
 
