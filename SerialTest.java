@@ -6,6 +6,7 @@ import java.io.*;
 public class SerialTest {
     public static Object deserialize(String fileName) throws IOException,
             ClassNotFoundException {
+
         FileInputStream fis = new FileInputStream(fileName);
         BufferedInputStream bis = new BufferedInputStream(fis);
         ObjectInputStream ois = new ObjectInputStream(bis);
@@ -16,7 +17,12 @@ public class SerialTest {
 
     public static void serialize(Object obj, String fileName)
             throws IOException {
-        FileOutputStream fos = new FileOutputStream(fileName);
+        File directory = new File("ImageDataSets");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
+        FileOutputStream fos = new FileOutputStream(directory+"/"+fileName);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
         ObjectOutputStream oos = new ObjectOutputStream(bos);
         oos.writeObject(obj);

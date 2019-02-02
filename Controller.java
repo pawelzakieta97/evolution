@@ -267,7 +267,7 @@ public class Controller implements Initializable {
             Image img = resampleImage(rImage.getImage(), scale);
             entity.setScale(scale/prevScale);
             prevScale = scale;
-            final javafx.scene.canvas.Canvas canvas = new Canvas(rImage.getImage().getWidth(),rImage.getImage().getHeight());
+            final Canvas canvas = new Canvas(rImage.getImage().getWidth(),rImage.getImage().getHeight());
             GraphicsContext gc = canvas.getGraphicsContext2D();
             this.lImage.setFitWidth(320);
             this.lImage.setPreserveRatio(true);
@@ -311,6 +311,7 @@ public class Controller implements Initializable {
                 fitness = ((PolygonSet)(controller.getLastGen().getBest())).getFitness();
                 chartUpd(fitness);
                 System.out.println(fitness+" at gen: "+this.genNum);
+                imgNum++;
                 entity = (PolygonSet)controller.getLastGen().getBest();
 //                PolygonSet entityDisplay = (PolygonSet)entity.clone();
 //                entityDisplay.setScale(1/scale);
@@ -728,10 +729,16 @@ public class Controller implements Initializable {
     private void saveImg() throws IOException{
         BufferedImage bufIImg = SwingFXUtils.fromFXImage(lImage.getImage(), null);
         System.out.println(path);
-        if (System.getProperty("os.name").contains("Windows"))
-            ImageIO.write(bufIImg, "png", new File(getParentDir(path)+"\\out"+this.imgNum+".png"));
-        else
-            ImageIO.write(bufIImg, "png", new File(path+"out"+this.imgNum+".png"));
+        File directory = new File("Images");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        if (System.getProperty("os.name").contains("Windows")) {
+
+            ImageIO.write(bufIImg, "png", new File(getParentDir(path) +"\\Images\\out" + this.imgNum + ".png"));
+        } else {
+            ImageIO.write(bufIImg, "png", new File(/*path+ "/"+*/directory+ "/out" + this.imgNum + ".png"));
+        }
     }
 
     static private String getParentDir(String dir){
