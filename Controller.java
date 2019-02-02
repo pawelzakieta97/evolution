@@ -672,7 +672,7 @@ public class Controller implements Initializable {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Image Recovery");
             alert.setHeaderText("When choosing the file o recover:");
-            alert.setContentText("Make sure you choose correct image before recovering the data!");
+            alert.setContentText("Make sure you choose correct image first");
             alert.showAndWait();
             String dir;
             FileChooser fileChooser = new FileChooser();
