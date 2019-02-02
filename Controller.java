@@ -660,13 +660,20 @@ public class Controller implements Initializable {
             }else{
                 System.out.println(dir.getAbsolutePath());
             }
-            SerialTest.serialize(entity, dir.getAbsolutePath()+"\\polySet.txt");
+            if (System.getProperty("os.name").contains("Windows"))
+                SerialTest.serialize(entity, dir.getAbsolutePath()+"\\polySet.txt");
+            else
+                SerialTest.serialize(entity, "polySet.txt");
         }
     }
     @FXML
     protected void restore(ActionEvent event) throws IOException {
         if (!running) {
-
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Image Recovery");
+            alert.setHeaderText("When choosing the file o recover:");
+            alert.setContentText("Make sure you choose correct image before recovering the data!");
+            alert.showAndWait();
             String dir;
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Choose PolygonSet serialized file");
@@ -685,8 +692,8 @@ public class Controller implements Initializable {
 
     private void loadrImage(String dir){
         Image img;
-        System.out.println(System.getProperty("os.name").substring(0,7));
-        if (System.getProperty("os.name").substring(0,7).equals("Windows")) img = new Image("FILE:///"+dir);
+        System.out.println(System.getProperty("os.name"));
+        if (System.getProperty("os.name").contains("Windows")) img = new Image("FILE:///"+dir);
         else img = new Image(dir);
         this.rImage.setImage(img);
         this.rImage.setFitWidth(390);
@@ -696,19 +703,28 @@ public class Controller implements Initializable {
     }
 
     private void loadPolygonSet(String dir){
-        System.out.println(System.getProperty("os.name").substring(0,7));
+        System.out.println(System.getProperty("os.name"));
+
         //if (System.getProperty("os.name").substring(0,7).equals("Windows")) dir = "FILE:///"+dir;
         try {
             entity = (PolygonSet)SerialTest.deserialize(dir);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Data Recovery");
+            alert.setHeaderText("data not found");
+            alert.setContentText("Make sure You chose correct file");
+            alert.showAndWait();
         }
     }
 
     private void saveImg() throws IOException{
         BufferedImage bufIImg = SwingFXUtils.fromFXImage(lImage.getImage(), null);
         System.out.println(path);
-        ImageIO.write(bufIImg, "png", new File(getParentDir(path)+"\\out"+this.imgNum+".png"));
+        if (System.getProperty("os.name").contains("Windows"))
+            ImageIO.write(bufIImg, "png", new File(getParentDir(path)+"\\out"+this.imgNum+".png"));
+        else
+            ImageIO.write(bufIImg, "png", new File(path+"out"+this.imgNum+".png"));
     }
 
     static private String getParentDir(String dir){
