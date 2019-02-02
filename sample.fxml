@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -37,7 +38,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <BorderPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+      <BorderPane maxWidth="1100.0" minWidth="1100.0" prefHeight="200.0" prefWidth="1100.0" VBox.vgrow="ALWAYS">
          <top>
             <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <buttons>
@@ -48,7 +49,7 @@
             </ButtonBar>
          </top>
          <right>
-            <GridPane alignment="CENTER" prefWidth="300.0" BorderPane.alignment="CENTER">
+            <GridPane alignment="CENTER" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" BorderPane.alignment="CENTER">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
@@ -92,7 +93,7 @@
                   <Button mnemonicParsing="false" onAction="#minusOneNumParents" text="-" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
                   <Slider fx:id="slideNumParents" min="1.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
                   <Label alignment="CENTER" prefHeight="16.0" prefWidth="289.0" text="Scaling" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.rowIndex="8" />
-                  <Slider fx:id="slideScaling" min = "0.0" max = "1.0" GridPane.columnIndex="4" GridPane.rowIndex="9" />
+                  <Slider fx:id="slideScaling" max="1.0" min="0.0" GridPane.columnIndex="4" GridPane.rowIndex="9" />
                   <Button alignment="CENTER" mnemonicParsing="false" onAction="#minusOneScaling" text="-" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
                   <Button mnemonicParsing="false" onAction="#plusOneScaling" text="+" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
                   <TextField fx:id="fieldScaling" onKeyPressed="#enterScaling" GridPane.columnIndex="2" GridPane.rowIndex="9" />
@@ -108,12 +109,12 @@
                      <children>
                         <SplitPane dividerPositions="0.5">
                           <items>
-                            <AnchorPane minHeight="350.0" minWidth="310.0" prefHeight="400.0" prefWidth="400.0">
+                            <AnchorPane maxWidth="400.0" minHeight="350.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0">
                                  <children>
                                     <ImageView fx:id="lImage" fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" />
                                  </children>
                               </AnchorPane>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="399.0">
+                            <AnchorPane maxWidth="400.0" minHeight="0.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0">
                                  <children>
                                     <ImageView fx:id="rImage" fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" />
                                  </children>
@@ -124,14 +125,34 @@
                   </AnchorPane>
                 <AnchorPane maxHeight="320.0" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                      <children>
-                        <LineChart fx:id="Ch" prefHeight="320.0" prefWidth="798.0">
-                          <xAxis>
-                            <NumberAxis prefWidth="800.0" side="BOTTOM" fx:id="xAxis" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis fx:id="yAxis" side="LEFT" />
-                          </yAxis>
-                        </LineChart>
+                        <SplitPane dividerPositions="0.5">
+                           <items>
+                              <AnchorPane maxWidth="400.0" minWidth="400.0" prefHeight="200.0" prefWidth="400.0">
+                                 <children>
+                                    <LineChart fx:id="generalCh" prefHeight="320.0" prefWidth="390.0">
+                                      <xAxis>
+                                        <NumberAxis side="BOTTOM" fx:id="genXAxis"/>
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis side="LEFT" fx:id="genYAxis"/>
+                                      </yAxis>
+                                    </LineChart>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane maxWidth="400.0" minWidth="400.0" prefWidth="400.0">
+                                 <children>
+                                    <LineChart fx:id="Ch" prefHeight="320.0" prefWidth="390.0">
+                                      <xAxis>
+                                        <NumberAxis prefWidth="800.0" side="BOTTOM" fx:id="xAxis" />
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis fx:id="yAxis" side="LEFT" />
+                                      </yAxis>
+                                    </LineChart>
+                                 </children>
+                              </AnchorPane>
+                           </items>
+                        </SplitPane>
                      </children>
                   </AnchorPane>
               </items>

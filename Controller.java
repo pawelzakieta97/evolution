@@ -153,11 +153,22 @@ public class Controller implements Initializable {
     @FXML
     private NumberAxis yAxis;
 
+    @FXML
+    private NumberAxis genXAxis;
+
+    @FXML
+    private NumberAxis genYAxis;
+
 
     @FXML
     private LineChart<Number, Number> Ch;
 
     private LineChart.Series<Number, Number> series = new LineChart.Series<Number, Number>();
+
+    @FXML
+    private LineChart<Number, Number> generalCh;
+
+    private LineChart.Series<Number, Number> generalSeries = new LineChart.Series<>();
 
 
 //    private LinkedList<Polygon> = new LinkedList<Polygon>();
@@ -189,7 +200,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL var1, ResourceBundle var2) {
-
+//init chart for the last 50 generations
         xAxis.setAutoRanging(false);
         xAxis.setLowerBound(0);
         xAxis.setUpperBound(10);
@@ -200,11 +211,26 @@ public class Controller implements Initializable {
         yAxis.setUpperBound(1.2);
         yAxis.setTickUnit(0.1);
 
-        series.getData().add(new LineChart.Data<Number, Number>(xChartCount, 0.8));
-        xChartCount++;
+        series.getData().add(new LineChart.Data<Number, Number>(xChartCount, 0));
         Ch.setCreateSymbols(false);
         Ch.setAnimated(false);
         Ch.getData().add(series);
+// init the chart for the whole story
+        genXAxis.setLowerBound(0);
+        genXAxis.setUpperBound(10);
+        genXAxis.setTickUnit(1);
+
+        genYAxis.setAutoRanging(false);
+        genYAxis.setLowerBound(0);
+        genYAxis.setUpperBound(1.1);
+        genYAxis.setTickUnit(0.1);
+
+        generalSeries.getData().add(new LineChart.Data<Number, Number>(xChartCount, 0));
+        generalCh.setCreateSymbols(false);
+        generalCh.setAnimated(false);
+        generalCh.getData().add(generalSeries);
+        xChartCount++;
+
 
 
         slideOne.setMax(AMOUNT);
@@ -964,11 +990,21 @@ public class Controller implements Initializable {
         if(xChartCount>=50){
             //series.getData().remove(0,1);
             xAxis.setLowerBound(xChartCount-50);
-            yAxis.setLowerBound((Double)(series.getData().get(xChartCount-50).getYValue()));
+            double pom = (Double)series.getData().get(xChartCount - 50).getYValue().doubleValue();
+            yAxis.setLowerBound(pom);
+
+//            yAxis.setLowerBound((Double)(series.getData().get(xChartCount-50).getYValue()));
             yAxis.setUpperBound(1);
         }
         series.getData().add(new LineChart.Data<Number, Number>(xChartCount, value));
-        AppThread.runAndWait(()->{Ch.getData().set(0, series);});
+
+        if (generalSeries.getData().size() > genXAxis.getUpperBound()) {
+            genXAxis.setUpperBound(genXAxis.getUpperBound()+1);
+        }
+        generalSeries.getData().add(new LineChart.Data<Number, Number>(xChartCount, value));
+        AppThread.runAndWait(()->{Ch.getData().set(0, series); generalCh.getData().set(0, generalSeries);});
+//        AppThread.runAndWait(()->{generalCh.getData().set(0, series);});
+
         xChartCount++;
     }
 
@@ -997,9 +1033,9 @@ public class Controller implements Initializable {
     }
 
     protected void loadrImage(String dir){
-        Image img = new Image("FILE:///"+dir);
+        Image img = new Image(/*"FILE:///"+*/dir);
         this.rImage.setImage(img);
-        this.rImage.setFitWidth(320);
+        this.rImage.setFitWidth(390);
         this.rImage.setPreserveRatio(true);
         System.out.println(this.rImage.getX()+" "+this.rImage.getY()+" "+this.rImage.getScaleX());
         System.out.println("opened");
