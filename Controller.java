@@ -729,6 +729,8 @@ public class Controller implements Initializable {
     private void saveImg() throws IOException{
         BufferedImage bufIImg = SwingFXUtils.fromFXImage(lImage.getImage(), null);
         System.out.println(path);
+        
+
         File directory = new File("Images");
         if (!directory.exists()) {
             directory.mkdir();
