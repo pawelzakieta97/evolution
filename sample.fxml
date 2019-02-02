@@ -27,10 +27,11 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#open" text="Open…" />
+            <MenuItem mnemonicParsing="false" onAction="#open" text="Open reference image…" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
+            <MenuItem mnemonicParsing="false" onAction="#restore" text="restore progress…" />
+            <MenuItem mnemonicParsing="false" onAction="#saveProgress" text="Save progress" />
                   <MenuItem mnemonicParsing="false" onAction="#export" text="Export" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Quit" />

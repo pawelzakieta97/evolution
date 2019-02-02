@@ -81,6 +81,7 @@ public class advancedSliderController implements Initializable{
     public void initialize(URL var1, ResourceBundle var2) {}
 
     public void userInit(){
+        fieldAddPoly.setText(Double.toString(parentController.getParams().addPolyChance));
         sliderAddPoly.setValue(parentController.getParams().addPolyChance);
         sliderAddPoly.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!parentController.isRunning()) {
@@ -89,6 +90,7 @@ public class advancedSliderController implements Initializable{
 //                Controller.setNowChAddPol(nowAddPoly);
             }
         });
+        fieldDelPoly.setText(Double.toString(parentController.getParams().deletePolyChance));
         sliderDelPoly.setValue(parentController.getParams().deletePolyChance);
         sliderDelPoly.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!parentController.isRunning()) {
@@ -97,6 +99,7 @@ public class advancedSliderController implements Initializable{
 //                Controller.setNowChAddPol(nowAddPoly);
             }
         });
+        fieldPolySize.setText(Double.toString(parentController.getParams().polygonSize));
         sliderPolySize.setValue(parentController.getParams().polygonSize);
         sliderPolySize.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!parentController.isRunning()) {
@@ -105,6 +108,7 @@ public class advancedSliderController implements Initializable{
 //                Controller.setNowChAddPol(nowAddPoly);
             }
         });
+        fieldChangeCol.setText(Double.toString(parentController.getParams().colorChange));
         sliderChangeCol.setValue(parentController.getParams().colorChange);
         sliderChangeCol.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!parentController.isRunning()) {
@@ -113,6 +117,7 @@ public class advancedSliderController implements Initializable{
 //                Controller.setNowChAddPol(nowAddPoly);
             }
         });
+        fieldAddVertex.setText(Double.toString(parentController.getParams().addVertexChance));
         sliderAddVertex.setValue(parentController.getParams().addVertexChance);
         sliderAddVertex.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!parentController.isRunning()) {
@@ -121,6 +126,7 @@ public class advancedSliderController implements Initializable{
 //                Controller.setNowChAddPol(nowAddPoly);
             }
         });
+        fieldDelVertex.setText(Double.toString(parentController.getParams().deleteVertexChance));
         sliderDelVertex.setValue(parentController.getParams().deleteVertexChance);
         sliderDelVertex.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!parentController.isRunning()) {
@@ -129,6 +135,7 @@ public class advancedSliderController implements Initializable{
 //                Controller.setNowChAddPol(nowAddPoly);
             }
         });
+        fieldShiftVertex.setText(Double.toString(parentController.getParams().vertexShift));
         sliderShiftVertex.setValue(parentController.getParams().vertexShift);
         sliderShiftVertex.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!parentController.isRunning()) {

@@ -19,6 +19,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -72,27 +73,6 @@ public class Controller implements Initializable {
     private TextField fieldOne;
 
     @FXML
-    private TextField fieldOne1;
-
-    @FXML
-    private TextField fieldOne2;
-
-    @FXML
-    private TextField fieldOne3;
-
-    @FXML
-    private TextField fieldOne4;
-
-    @FXML
-    private TextField fieldOne5;
-
-    @FXML
-    private TextField fieldOne6;
-
-    @FXML
-    private TextField fieldOne7;
-
-    @FXML
     private TextField fieldOne8;
 
     @FXML
@@ -106,27 +86,6 @@ public class Controller implements Initializable {
 
     @FXML
     private Slider slideOne;
-
-    @FXML
-    private Slider slideOne1;
-
-    @FXML
-    private Slider slideOne2;
-
-    @FXML
-    private Slider slideOne3;
-
-    @FXML
-    private Slider slideOne4;
-
-    @FXML
-    private Slider slideOne5;
-
-    @FXML
-    private Slider slideOne6;
-
-    @FXML
-    private Slider slideOne7;
 
     @FXML
     private Slider slideOne8;
@@ -235,6 +194,7 @@ public class Controller implements Initializable {
 
         slideOne.setMax(AMOUNT);
         slideOne.setBlockIncrement(AMOUNT/100);
+        slideOne.setValue(params.amount);
         fieldOne.setText(((Double)params.amount).toString());
         slideOne.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!running) {
@@ -243,79 +203,10 @@ public class Controller implements Initializable {
             }
         });
 
-//        slideOne1.setMax(ADDPOLYCHANCE);
-//        slideOne1.setBlockIncrement(ADDPOLYCHANCE/100);
-//        fieldOne1.setText(((Double)params.addPolyChance).toString());
-//        slideOne1.valueProperty().addListener((observable, oldValue, newValue) ->{
-//            if (!running) {
-//                params.addPolyChance = newValue.doubleValue();
-//                fieldOne1.setText(Double.toString(newValue.doubleValue()));
-//            }
-//        });
-//
-//        slideOne2.setMax(DELPOLYCHANCE);
-//        slideOne2.setBlockIncrement(DELPOLYCHANCE/100);
-//        fieldOne2.setText(((Double)params.deletePolyChance).toString());
-//        slideOne2.valueProperty().addListener((observable, oldValue, newValue) ->{
-//            if (!running) {
-//                params.deletePolyChance = newValue.doubleValue();
-//                fieldOne2.setText(Double.toString(newValue.doubleValue()));
-//            }
-//        });
-//
-//        slideOne3.setMax(POLYSIZE);
-//        slideOne3.setBlockIncrement(POLYSIZE/100);
-//        fieldOne3.setText(((Double)params.polygonSize).toString());
-//        slideOne3.valueProperty().addListener((observable, oldValue, newValue) ->{
-//            if (!running) {
-//                params.polygonSize = newValue.doubleValue();
-//                fieldOne3.setText(Double.toString(newValue.doubleValue()));
-//            }
-//        });
-//
-//        slideOne4.setMax(COLCHANGE);
-//        slideOne4.setBlockIncrement(COLCHANGE/100);
-//        fieldOne4.setText(((Double)params.colorChange).toString());
-//        slideOne4.valueProperty().addListener((observable, oldValue, newValue) ->{
-//            if (!running) {
-//                params.colorChange = newValue.doubleValue();
-//                fieldOne4.setText(Double.toString(newValue.doubleValue()));
-//            }
-//        });
-//
-//        slideOne5.setMax(VERTEXADD);
-//        slideOne5.setBlockIncrement(VERTEXADD/100);
-//        fieldOne5.setText(((Double)params.addVertexChance).toString());
-//        slideOne5.valueProperty().addListener((observable, oldValue, newValue) ->{
-//            if (!running) {
-//                params.addVertexChance = newValue.doubleValue();
-//                fieldOne5.setText(Double.toString(newValue.doubleValue()));
-//            }
-//        });
-//
-//        slideOne6.setMax(VERTEXDEL);
-//        slideOne6.setBlockIncrement(VERTEXDEL/100);
-//        fieldOne6.setText(((Double)params.deleteVertexChance).toString());
-//        slideOne6.valueProperty().addListener((observable, oldValue, newValue) ->{
-//            if (!running) {
-//                params.deleteVertexChance = newValue.doubleValue();
-//                fieldOne6.setText(Double.toString(newValue.doubleValue()));
-//            }
-//        });
-//
-//        slideOne7.setMax(VERTEXSHIFT);
-//        slideOne7.setBlockIncrement(VERTEXSHIFT/100);
-//        fieldOne7.setText(((Double)params.vertexShift).toString());
-//        slideOne7.valueProperty().addListener((observable, oldValue, newValue) ->{
-//            if (!running) {
-//                params.vertexShift = newValue.doubleValue();
-//                fieldOne7.setText(Double.toString(newValue.doubleValue()));
-//            }
-//        });
-
         slideOne8.setBlockIncrement(ROI);
         slideOne8.setMax(2);
         slideOne8.setMin(0);
+        slideOne8.setValue(nowRoi);
         fieldOne8.setText(((Double)nowRoi).toString());
         slideOne8.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!running) {
@@ -325,6 +216,7 @@ public class Controller implements Initializable {
         });
 
         fieldPopSize.setText(((Integer)popSize).toString());
+        slidePopSize.setValue(popSize);
         slidePopSize.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!running) {
                 popSize = newValue.intValue();
@@ -333,13 +225,16 @@ public class Controller implements Initializable {
         });
 
         fieldNumParents.setText(((Integer)numParents).toString());
+        slideNumParents.setValue(numParents);
         slideNumParents.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!running) {
                 numParents = newValue.intValue();
                 fieldNumParents.setText(Integer.toString(newValue.intValue()));
             }
         });
+
         fieldScaling.setText(Double.toString(scale));
+        slideScaling.setValue(scale);
         slideScaling.valueProperty().addListener((observable, oldValue, newValue) ->{
             if (!running) {
                 scale = newValue.doubleValue();
@@ -413,13 +308,14 @@ public class Controller implements Initializable {
                 chartUpd(fitness);
                 System.out.println(fitness+" at gen: "+this.genNum);
                 entity = (PolygonSet)controller.getLastGen().getBest();
-                PolygonSet entityDisplay = (PolygonSet)((PolygonSet)controller.getLastGen().getBest()).clone();
-                entityDisplay.setScale(1/scale);
-                entityDisplay.drawBackground(gc, scale);
-                if(entityDisplay.getBase() != null) entityDisplay.getBase().drawPolygons(gc);
-                entityDisplay.drawPolygons(gc);
-                entityDisplay.drawROI(gc);
-                AppThread.runAndWait(()->this.lImage.setImage(canvas.snapshot(null, null)));
+//                PolygonSet entityDisplay = (PolygonSet)entity.clone();
+//                entityDisplay.setScale(1/scale);
+//                entityDisplay.drawBackground(gc, scale);
+//                if(entityDisplay.getBase() != null) entityDisplay.getBase().drawPolygons(gc);
+//                entityDisplay.drawPolygons(gc);
+//                entityDisplay.drawROI(gc);
+//                AppThread.runAndWait(()->this.lImage.setImage(canvas.snapshot(null, null)));
+                updateViewport();
                 genNum ++;
 
                 //this.runningRequest = false;
@@ -427,6 +323,22 @@ public class Controller implements Initializable {
             running = false;
         }).start();
 
+    }
+
+    private void updateViewport(){
+        if (rImage.getImage() == null)return;
+        if (entity.getTargetImage() == null) {
+            entity.setTargetImage(resampleImage(rImage.getImage(),scale));
+        }
+        final javafx.scene.canvas.Canvas canvas = new Canvas(rImage.getImage().getWidth(),rImage.getImage().getHeight());
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        PolygonSet entityDisplay = (PolygonSet)entity.clone();
+        entityDisplay.setScale(1/scale);
+        entityDisplay.drawBackground(gc, scale);
+        if(entityDisplay.getBase() != null) entityDisplay.getBase().drawPolygons(gc);
+        entityDisplay.drawPolygons(gc);
+        entityDisplay.drawROI(gc);
+        AppThread.runAndWait(()->this.lImage.setImage(canvas.snapshot(null, null)));
     }
 
 //
@@ -489,301 +401,6 @@ public class Controller implements Initializable {
         }
     }
 //
-//    end code for first value
-//
-
-//
-//    start code for second value
-//
-    @FXML
-    protected void minusOne1(ActionEvent event) {
-        if (!running) {
-            if (params.addPolyChance <= 0)
-                return;
-            params.addPolyChance-=(ADDPOLYCHANCE/100);
-    //        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne1.setText(Double.toString(params.addPolyChance));
-            slideOne1.setValue(params.addPolyChance);
-        }
-    }
-
-    @FXML
-    protected void plusOne1(ActionEvent event) {
-        if (!running) {
-            if (params.addPolyChance >= ADDPOLYCHANCE)
-                return;
-            params.addPolyChance+=(ADDPOLYCHANCE/100);
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne1.setText(Double.toString(params.addPolyChance));
-            slideOne1.setValue(params.addPolyChance);
-        }
-    }
-
-    @FXML
-    protected void enterHandle1(KeyEvent event) {
-        if (!running) {
-            if (event.getCode() == KeyCode.ENTER) {
-                double pom = Double.parseDouble(fieldOne1.getText());
-                if (pom < 0 || pom > ADDPOLYCHANCE)
-                    return;
-                params.addPolyChance = pom;
-                slideOne1.setValue(params.addPolyChance);
-            }
-        }
-    }
-    //
-//    end code for second value
-//
-
-    //
-//    start code for third value
-//
-    @FXML
-    protected void minusOne2(ActionEvent event) {
-        if (!running) {
-            if (params.deletePolyChance <= 0)
-                return;
-            params.deletePolyChance-=(DELPOLYCHANCE/100);
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne2.setText(Double.toString(params.deletePolyChance));
-            slideOne2.setValue(params.deletePolyChance);
-        }
-    }
-
-    @FXML
-    protected void plusOne2(ActionEvent event) {
-        if (!running) {
-            if (params.deletePolyChance >= DELPOLYCHANCE)
-                return;
-            params.deletePolyChance+=(DELPOLYCHANCE/100);
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne2.setText(Double.toString(params.deletePolyChance));
-            slideOne2.setValue(params.deletePolyChance);
-        }
-    }
-
-    @FXML
-    protected void enterHandle2(KeyEvent event) {
-        if (!running) {
-            if (event.getCode() == KeyCode.ENTER) {
-                double pom = Double.parseDouble(fieldOne2.getText());
-                if (pom < 0 || pom > DELPOLYCHANCE)
-                    return;
-                params.deletePolyChance = pom;
-                slideOne2.setValue(params.deletePolyChance);
-            }
-        }
-    }
-    //
-//    end code for third value
-//
-
-    //    start code for fourth value
-//
-    @FXML
-    protected void minusOne3(ActionEvent event) {
-        if (!running) {
-            if (params.polygonSize <= 0)
-                return;
-            params.polygonSize-=POLYSIZE/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne3.setText(Double.toString(params.polygonSize));
-            slideOne3.setValue(params.polygonSize);
-        }
-    }
-
-    @FXML
-    protected void plusOne3(ActionEvent event) {
-        if (!running) {
-            if (params.polygonSize >= POLYSIZE)
-                return;
-            params.polygonSize+=POLYSIZE/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne3.setText(Double.toString(params.polygonSize));
-            slideOne3.setValue(params.polygonSize);
-        }
-    }
-
-    @FXML
-    protected void enterHandle3(KeyEvent event) {
-        if (!running) {
-            if (event.getCode() == KeyCode.ENTER) {
-                double pom = Double.parseDouble(fieldOne3.getText());
-                if (pom < 0 || pom > POLYSIZE)
-                    return;
-                params.polygonSize = pom;
-                slideOne3.setValue(params.polygonSize);
-            }
-        }
-    }
-//
-//    end code for fourth value
-//
-
-//    start code for fith value
-//
-    @FXML
-    protected void minusOne4(ActionEvent event) {
-        if (!running) {
-            if (params.colorChange <= 0)
-                return;
-            params.colorChange-=COLCHANGE/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne4.setText(Double.toString(params.colorChange));
-            slideOne4.setValue(params.colorChange);
-        }
-    }
-
-    @FXML
-    protected void plusOne4(ActionEvent event) {
-        if (!running) {
-            if (params.colorChange >= COLCHANGE)
-                return;
-            params.colorChange+=COLCHANGE/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne4.setText(Double.toString(params.colorChange));
-            slideOne4.setValue(params.colorChange);
-        }
-    }
-
-    @FXML
-    protected void enterHandle4(KeyEvent event) {
-        if (!running) {
-            if (event.getCode() == KeyCode.ENTER) {
-                double pom = Double.parseDouble(fieldOne4.getText());
-                if (pom < 0 || pom > COLCHANGE)
-                    return;
-                params.colorChange = pom;
-                slideOne4.setValue(params.colorChange);
-            }
-        }
-    }
-    //
-//    end code for fith value
-//
-
-//  start code for sixth value
-//
-    @FXML
-    protected void minusOne5(ActionEvent event) {
-        if (!running) {
-            if (params.addVertexChance <= 0)
-                return;
-            params.addVertexChance-=VERTEXADD/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne5.setText(Double.toString(params.addVertexChance));
-            slideOne5.setValue(params.addVertexChance);
-        }
-    }
-
-    @FXML
-    protected void plusOne5(ActionEvent event) {
-        if (!running) {
-            if (params.addVertexChance >= VERTEXADD)
-                return;
-            params.addVertexChance+=VERTEXADD/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne5.setText(Double.toString(params.addVertexChance));
-            slideOne5.setValue(params.addVertexChance);
-        }
-    }
-
-    @FXML
-    protected void enterHandle5(KeyEvent event) {
-        if (!running) {
-            if (event.getCode() == KeyCode.ENTER) {
-                double pom = Double.parseDouble(fieldOne5.getText());
-                if (pom < 0 || pom > VERTEXADD)
-                    return;
-                params.addVertexChance = pom;
-                slideOne5.setValue(params.addVertexChance);
-            }
-        }
-    }
-    //
-//    end code for sixth value
-//
-
-//  start code for seventh value
-//
-    @FXML
-    protected void minusOne6(ActionEvent event) {
-        if (!running) {
-            if (params.deleteVertexChance <= 0)
-                return;
-            params.deleteVertexChance-=VERTEXDEL/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne6.setText(Double.toString(params.deleteVertexChance));
-            slideOne6.setValue(params.deleteVertexChance);
-        }
-    }
-
-    @FXML
-    protected void plusOne6(ActionEvent event) {
-        if (!running) {
-            if (params.deleteVertexChance >= VERTEXDEL)
-                return;
-            params.deleteVertexChance+=VERTEXDEL/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne6.setText(Double.toString(params.deleteVertexChance));
-            slideOne6.setValue(params.deleteVertexChance);
-        }
-    }
-
-    @FXML
-    protected void enterHandle6(KeyEvent event) {
-        if (!running) {
-            if (event.getCode() == KeyCode.ENTER) {
-                double pom = Double.parseDouble(fieldOne6.getText());
-                if (pom < 0 || pom > VERTEXDEL)
-                    return;
-                params.deleteVertexChance = pom;
-                slideOne6.setValue(params.deleteVertexChance);
-            }
-        }
-    }
-    //
-//    end code for seventh value
-//
-
-//  start code for eighth value
-//
-    @FXML
-    protected void minusOne7(ActionEvent event) {
-        if (!running) {
-            if (params.vertexShift <= 0)
-                return;
-            params.vertexShift-=VERTEXSHIFT/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne7.setText(Double.toString(params.vertexShift));
-            slideOne7.setValue(params.vertexShift);
-        }
-    }
-
-    @FXML
-    protected void plusOne7(ActionEvent event) {
-        if (!running) {
-            if (params.vertexShift >= VERTEXSHIFT)
-                return;
-            params.vertexShift+=VERTEXSHIFT/100;
-//        valueOne.setText(Integer.toString(nowAmount));
-            fieldOne7.setText(Double.toString(params.vertexShift));
-            slideOne7.setValue(params.vertexShift);
-        }
-    }
-
-    @FXML
-    protected void enterHandle7(KeyEvent event) {
-        if (!running) {
-            if (event.getCode() == KeyCode.ENTER) {
-                double pom = Double.parseDouble(fieldOne7.getText());
-                if (pom < 0 || pom > VERTEXSHIFT)
-                    return;
-                params.vertexShift = pom;
-                slideOne7.setValue(params.vertexShift);
-            }
-        }
-    }
     //
 //    end code for eighth value
 //
@@ -1032,13 +649,60 @@ public class Controller implements Initializable {
         }
     }
 
-    protected void loadrImage(String dir){
-        Image img = new Image(/*"FILE:///"+*/dir);
+    @FXML
+    protected void saveProgress(ActionEvent event) throws IOException {
+        if (!running) {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            File dir = directoryChooser.showDialog(rImage.getScene().getWindow());
+
+            if(dir == null){
+                //No Directory selected
+            }else{
+                System.out.println(dir.getAbsolutePath());
+            }
+            SerialTest.serialize(entity, dir.getAbsolutePath()+"\\polySet.txt");
+        }
+    }
+    @FXML
+    protected void restore(ActionEvent event) throws IOException {
+        if (!running) {
+
+            String dir;
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Choose PolygonSet serialized file");
+            File file = fileChooser.showOpenDialog(rImage.getScene().getWindow());
+            if (file != null) {
+                dir = file.getCanonicalPath();
+                String tab[] = dir.split("/");
+                dir = tab[tab.length-1];
+                System.out.println(dir);
+                path = dir;
+                loadPolygonSet(dir);
+            }
+            updateViewport();
+        }
+    }
+
+    private void loadrImage(String dir){
+        Image img;
+        System.out.println(System.getProperty("os.name").substring(0,7));
+        if (System.getProperty("os.name").substring(0,7).equals("Windows")) img = new Image("FILE:///"+dir);
+        else img = new Image(dir);
         this.rImage.setImage(img);
         this.rImage.setFitWidth(390);
         this.rImage.setPreserveRatio(true);
         System.out.println(this.rImage.getX()+" "+this.rImage.getY()+" "+this.rImage.getScaleX());
         System.out.println("opened");
+    }
+
+    private void loadPolygonSet(String dir){
+        System.out.println(System.getProperty("os.name").substring(0,7));
+        //if (System.getProperty("os.name").substring(0,7).equals("Windows")) dir = "FILE:///"+dir;
+        try {
+            entity = (PolygonSet)SerialTest.deserialize(dir);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void saveImg() throws IOException{
@@ -1047,10 +711,6 @@ public class Controller implements Initializable {
         ImageIO.write(bufIImg, "png", new File(getParentDir(path)+"\\out"+this.imgNum+".png"));
     }
 
-//    public double[] getValues(){
-//        double[] pom = {nowAmount, nowChAddPol, nowChDelPol, nowPolSize, nowColChange, nowChAddVer, nowChDelVer, nowShVer, nowRoi};
-//        return pom;
-//    }
     static private String getParentDir(String dir){
         int i = dir.length()-1;
         while(dir.charAt(i)!='\\') i--;
