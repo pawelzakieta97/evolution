@@ -29,6 +29,8 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 
@@ -342,7 +344,8 @@ public class Controller implements Initializable {
         entityDisplay.drawBackground(gc, scale);
         if(entityDisplay.getBase() != null) entityDisplay.getBase().drawPolygons(gc);
         entityDisplay.drawPolygons(gc);
-        entityDisplay.drawROI(gc);
+        if (runningScale)
+            entityDisplay.drawROI(gc);
         AppThread.runAndWait(()->this.lImage.setImage(canvas.snapshot(null, null)));
     }
 
@@ -361,9 +364,10 @@ public class Controller implements Initializable {
     protected void stopProcessing(ActionEvent event) throws IOException {
         if (runningRequest) {
             System.out.println("STOP");
+            runningScale = false;
+            updateViewport();
             saveImg();
             runningRequest = false;
-            runningScale = false;
         }
     }
 
@@ -416,9 +420,9 @@ public class Controller implements Initializable {
     @FXML
     protected void minusOne8(ActionEvent event) {
         if (!running) {
-            if (nowRoi == 0.03125)
+            if (nowRoi == 0)
                 return;
-            nowRoi-=ROI;
+            nowRoi-=0.03125;
 //        valueOne.setText(Integer.toString(nowAmount));
             fieldOne8.setText(Double.toString(nowRoi));
             slideOne8.setValue(nowRoi);
@@ -428,9 +432,9 @@ public class Controller implements Initializable {
     @FXML
     protected void plusOne8(ActionEvent event) {
         if (!running) {
-            if (nowRoi == 1)
+            if (nowRoi == 2)
                 return;
-            nowRoi+=ROI;
+            nowRoi+=0.03125;
 //        valueOne.setText(Integer.toString(nowAmount));
             fieldOne8.setText(Double.toString(nowRoi));
             slideOne8.setValue(nowRoi);
@@ -652,6 +656,7 @@ public class Controller implements Initializable {
                 dir = tab[tab.length-1];
                 System.out.println(dir);
                 path = dir;
+
                 loadrImage(dir);
             }
         }
@@ -701,6 +706,7 @@ public class Controller implements Initializable {
     private void loadrImage(String dir){
         Image img;
         System.out.println(System.getProperty("os.name"));
+        System.out.println(dir);
         if (System.getProperty("os.name").contains("Windows")) img = new Image("FILE:///"+dir);
         else img = new Image(dir);
         this.rImage.setImage(img);
@@ -729,7 +735,7 @@ public class Controller implements Initializable {
     private void saveImg() throws IOException{
         BufferedImage bufIImg = SwingFXUtils.fromFXImage(lImage.getImage(), null);
         System.out.println(path);
-        
+
 
         File directory = new File("Images");
         if (!directory.exists()) {
