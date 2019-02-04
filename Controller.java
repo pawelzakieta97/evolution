@@ -27,10 +27,15 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -249,6 +254,9 @@ public class Controller implements Initializable {
      */
     private LineChart.Series<Number, Number> generalSeries = new LineChart.Series<>();
 
+    private FileWriter writer;
+
+
     /**
      * constructor used to initialize the values in the beginning of the program
      */
@@ -439,6 +447,21 @@ public class Controller implements Initializable {
                 chartUpd(fitness);
                 System.out.println(fitness+" at gen: "+this.genNum);
                 imgNum++;
+//
+//                create file and append value
+                try {
+                    File out = new File("analysis.txt");
+                    if (!out.exists()) {
+                        out.createNewFile();
+                    }
+                    writer = new FileWriter(out, true);
+                    writer.write(""+imgNum+":   "+fitness+"\n");
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
 //                get the best image from last generation
                 entity = (PolygonSet)controller.getLastGen().getBest();
                 updateViewport();
@@ -505,6 +528,8 @@ public class Controller implements Initializable {
     @FXML
     protected void stopProcessing(ActionEvent event) throws IOException {
         if (runningRequest) {
+
+//            writer.close();
 //            System.out.println("STOP");
             runningScale = false;
             updateViewport();
