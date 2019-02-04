@@ -1,7 +1,6 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Control;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -9,12 +8,8 @@ import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.DoubleUnaryOperator;
 
 public class advancedSliderController implements Initializable{
-
-
-    private double nowAddPoly;
 
     @FXML
     private Slider sliderAddPoly;

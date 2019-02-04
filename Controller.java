@@ -1,5 +1,3 @@
-
-//import com.sun.prism.Image;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,21 +9,16 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -271,7 +264,7 @@ public class Controller implements Initializable {
             params.width = (int)img.getWidth();
             params.height = (int)img.getHeight();
             entity.setRecentParams(params);
-            entity.setTargetImage(img);
+            PolygonSet.setTargetImage(img);
             entity.merge();
             if(this.nowRoi != 0){
                 entity.setBase((PolygonSet) entity.clone());
@@ -308,13 +301,6 @@ public class Controller implements Initializable {
                 chartUpd(fitness);
                 System.out.println(fitness+" at gen: "+this.genNum);
                 entity = (PolygonSet)controller.getLastGen().getBest();
-//                PolygonSet entityDisplay = (PolygonSet)entity.clone();
-//                entityDisplay.setScale(1/scale);
-//                entityDisplay.drawBackground(gc, scale);
-//                if(entityDisplay.getBase() != null) entityDisplay.getBase().drawPolygons(gc);
-//                entityDisplay.drawPolygons(gc);
-//                entityDisplay.drawROI(gc);
-//                AppThread.runAndWait(()->this.lImage.setImage(canvas.snapshot(null, null)));
                 updateViewport();
                 genNum ++;
 
@@ -327,8 +313,8 @@ public class Controller implements Initializable {
 
     private void updateViewport(){
         if (rImage.getImage() == null)return;
-        if (entity.getTargetImage() == null) {
-            entity.setTargetImage(resampleImage(rImage.getImage(),scale));
+        if (PolygonSet.getTargetImage() == null) {
+            PolygonSet.setTargetImage(resampleImage(rImage.getImage(),scale));
         }
         final javafx.scene.canvas.Canvas canvas = new Canvas(rImage.getImage().getWidth(),rImage.getImage().getHeight());
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -569,15 +555,13 @@ public class Controller implements Initializable {
 
     @FXML
     protected void advancedButton(ActionEvent event) {
-        //Parent root;
-
         try {
             //root = FXMLLoader.load(getClass().getResource("advancedSliders.fxml"));
             FXMLLoader loader = new FXMLLoader(getClass().getResource("advancedSliders.fxml"));
             Stage stage = new Stage();
             stage.setTitle("My New Stage Title");
-            stage.setScene(new Scene((Pane) loader.load()));
-            advancedSliderController asc = loader.<advancedSliderController>getController();
+            stage.setScene(new Scene(loader.load()));
+            advancedSliderController asc = loader.getController();
             System.out.println(asc);
             asc.setParentController(this);
             asc.userInit();
@@ -605,12 +589,9 @@ public class Controller implements Initializable {
             xAxis.setUpperBound(xAxis.getUpperBound()+1);
         }
         if(xChartCount>=50){
-            //series.getData().remove(0,1);
             xAxis.setLowerBound(xChartCount-50);
-            double pom = (Double)series.getData().get(xChartCount - 50).getYValue().doubleValue();
+            double pom = series.getData().get(xChartCount - 50).getYValue().doubleValue();
             yAxis.setLowerBound(pom);
-
-//            yAxis.setLowerBound((Double)(series.getData().get(xChartCount-50).getYValue()));
             yAxis.setUpperBound(1);
         }
         series.getData().add(new LineChart.Data<Number, Number>(xChartCount, value));
@@ -620,7 +601,6 @@ public class Controller implements Initializable {
         }
         generalSeries.getData().add(new LineChart.Data<Number, Number>(xChartCount, value));
         AppThread.runAndWait(()->{Ch.getData().set(0, series); generalCh.getData().set(0, generalSeries);});
-//        AppThread.runAndWait(()->{generalCh.getData().set(0, series);});
 
         xChartCount++;
     }
