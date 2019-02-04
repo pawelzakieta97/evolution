@@ -851,8 +851,6 @@ public class Controller implements Initializable {
             File file = fileChooser.showOpenDialog(rImage.getScene().getWindow());
             if (file != null) {
                 dir = file.getCanonicalPath();
-                String tab[] = dir.split("/");
-                dir = tab[tab.length-1];
                 System.out.println(dir);
                 loadrImage(dir);
             }
