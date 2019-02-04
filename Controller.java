@@ -449,6 +449,7 @@ public class Controller implements Initializable {
 //                get the best image from last generation
                 entity = (PolygonSet)controller.getLastGen().getBest();
                 updateViewport();
+                AppThread.runAndWait(()->{saveSet(); saveImg();});
                 genNum ++;
             }
             running = false;
@@ -860,10 +861,6 @@ public class Controller implements Initializable {
      */
     @FXML
     protected void saveProgress(ActionEvent event) {
-        saveSet();
-    }
-
-    private void saveSet() {
         try {
             if (!running) {
                 DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -876,6 +873,27 @@ public class Controller implements Initializable {
                 }
                 if (System.getProperty("os.name").contains("Windows"))
                     SerialTest.serialize(entity, dir.getAbsolutePath() + "\\polySet.txt");
+                else
+                    SerialTest.serialize(entity, "polySet.txt");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveSet() {
+        try {
+            if (!running) {
+//                DirectoryChooser directoryChooser = new DirectoryChooser();
+//                File dir = directoryChooser.showDialog(rImage.getScene().getWindow());
+
+//                if (dir == null) {
+//                    //No Directory selected
+//                } else {
+//                    System.out.println(dir.getAbsolutePath());
+//                }
+                if (System.getProperty("os.name").contains("Windows"))
+                    SerialTest.serialize(entity, /*dir.getAbsolutePath() +*/ "ImageDataSets\\polySet.txt");
                 else
                     SerialTest.serialize(entity, "polySet.txt");
             }
@@ -954,18 +972,22 @@ public class Controller implements Initializable {
      * function to save created most accurate image in separated folder
      * @throws IOException
      */
-    private void saveImg() throws IOException{
-        BufferedImage bufIImg = SwingFXUtils.fromFXImage(lImage.getImage(), null);
-        System.out.println(path);
-        File directory = new File("Images");
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-        if (System.getProperty("os.name").contains("Windows")) {
+    private void saveImg() {
+        try {
+            BufferedImage bufIImg = SwingFXUtils.fromFXImage(lImage.getImage(), null);
+            System.out.println(path);
+            File directory = new File("Images");
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+            if (System.getProperty("os.name").contains("Windows")) {
 
-            ImageIO.write(bufIImg, "png", new File(getParentDir(path) +"\\Images\\out" + this.imgNum + ".png"));
-        } else {
-            ImageIO.write(bufIImg, "png", new File(/*path+ "/"+*/directory+ "/out" + this.imgNum + ".png"));
+                ImageIO.write(bufIImg, "png", new File(getParentDir(path) + "\\Images\\out" + this.imgNum + ".png"));
+            } else {
+                ImageIO.write(bufIImg, "png", new File(/*path+ "/"+*/directory + "/out" + this.imgNum + ".png"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -7,7 +7,7 @@ public class SerialTest {
     public static Object deserialize(String fileName) throws IOException,
             ClassNotFoundException {
 
-        FileInputStream fis = new FileInputStream(fileName);
+        FileInputStream fis = new FileInputStream("ImageDataSets/"+fileName);
         BufferedInputStream bis = new BufferedInputStream(fis);
         ObjectInputStream ois = new ObjectInputStream(bis);
         Object obj = ois.readObject();
