@@ -78,10 +78,6 @@ public class Controller implements Initializable {
      */
     final double ROI;
 
-    /**
-     * field to save backup polygon
-     */
-    private String imgName;
 
     /**
      * @return current set of parameters defined in GUI used to manipulate the image
@@ -115,10 +111,6 @@ public class Controller implements Initializable {
      * value of image scale in current generation
      */
     private double scale;
-    /**
-     * path required to save the best fitting image from each generation
-     */
-    private String path;
     /**
      * number of generation used to print as dev information
      */
@@ -407,7 +399,7 @@ public class Controller implements Initializable {
             params.width = (int)img.getWidth();
             params.height = (int)img.getHeight();
             entity.setRecentParams(params);
-            entity.setTargetImage(img);
+            PolygonSet.setTargetImage(img);
             entity.merge();
 //            check for changing region of interest
             if(this.nowRoi != 0){
@@ -461,8 +453,8 @@ public class Controller implements Initializable {
 //    function to refresh display of generated image
     private void updateViewport(){
         if (rImage.getImage() == null)return;
-        if (entity.getTargetImage() == null) {
-            entity.setTargetImage(resampleImage(rImage.getImage(),scale));
+        if (PolygonSet.getTargetImage() == null) {
+            PolygonSet.setTargetImage(resampleImage(rImage.getImage(),scale));
         }
         final javafx.scene.canvas.Canvas canvas = new Canvas(rImage.getImage().getWidth(),rImage.getImage().getHeight());
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -477,8 +469,8 @@ public class Controller implements Initializable {
     }
     private Image getRenderedImage(){
         if (rImage.getImage() == null)return null;
-        if (entity.getTargetImage() == null) {
-            entity.setTargetImage(resampleImage(rImage.getImage(),scale));
+        if (PolygonSet.getTargetImage() == null) {
+            PolygonSet.setTargetImage(resampleImage(rImage.getImage(),scale));
         }
         final javafx.scene.canvas.Canvas canvas = new Canvas(rImage.getImage().getWidth(),rImage.getImage().getHeight());
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -796,8 +788,8 @@ public class Controller implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("advancedSliders.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Advanced Variables");
-            stage.setScene(new Scene((Pane) loader.load()));
-            advancedSliderController asc = loader.<advancedSliderController>getController();
+            stage.setScene(new Scene(loader.load()));
+            advancedSliderController asc = loader.getController();
             System.out.println(asc);
             asc.setParentController(this);
             asc.userInit();
@@ -822,7 +814,7 @@ public class Controller implements Initializable {
         if(xChartCount>=50){
             xAxis.setLowerBound(xChartCount-50);
 //            change scale in y-axis
-            double pom = (Double)series.getData().get(xChartCount - 50).getYValue().doubleValue();
+            double pom = series.getData().get(xChartCount - 50).getYValue().doubleValue();
             yAxis.setLowerBound(pom);
             yAxis.setUpperBound(1);
         }
@@ -862,8 +854,6 @@ public class Controller implements Initializable {
                 String tab[] = dir.split("/");
                 dir = tab[tab.length-1];
                 System.out.println(dir);
-                path = dir;
-                imgName = dir.substring(0, dir.length()-4);
                 loadrImage(dir);
             }
         }
@@ -900,14 +890,6 @@ public class Controller implements Initializable {
     private void saveSet() {
         try {
             if (!running) {
-//                DirectoryChooser directoryChooser = new DirectoryChooser();
-//                File dir = directoryChooser.showDialog(rImage.getScene().getWindow());
-
-//                if (dir == null) {
-//                    //No Directory selected
-//                } else {
-//                    System.out.println(dir.getAbsolutePath());
-//                }
                 if (System.getProperty("os.name").contains("Windows")) {
                     new File("ImageDataSets").mkdirs();
                     SerialTest.serialize(entity, /*dir.getAbsolutePath() +*/ "polySet.txt");
@@ -930,7 +912,7 @@ public class Controller implements Initializable {
         if (!running) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Image Recovery");
-            alert.setHeaderText("When choosing the file o recover:");
+            alert.setHeaderText("When choosing the file to recover:");
             alert.setContentText("Make sure you choose correct image first");
             alert.showAndWait();
             String dir;
@@ -939,10 +921,7 @@ public class Controller implements Initializable {
             File file = fileChooser.showOpenDialog(rImage.getScene().getWindow());
             if (file != null) {
                 dir = file.getCanonicalPath();
-                String tab[] = dir.split("/");
-                dir = tab[tab.length-1];
                 System.out.println(dir);
-                path = dir;
                 loadPolygonSet(dir);
             }
             updateViewport();
@@ -993,14 +972,13 @@ public class Controller implements Initializable {
     private void saveImg() {
         try {
             BufferedImage bufIImg = SwingFXUtils.fromFXImage(getRenderedImage(), null);
-            System.out.println(path);
             File directory = new File("Images");
             if (!directory.exists()) {
                 directory.mkdir();
             }
             if (System.getProperty("os.name").contains("Windows")) {
-                new File(getParentDir(path) + "\\Images").mkdirs();
-                ImageIO.write(bufIImg, "png", new File(getParentDir(path) + "\\Images\\out" + this.imgNum + ".png"));
+                //new File(getParentDir(path) + "\\Images").mkdirs();
+                ImageIO.write(bufIImg, "png", new File(directory + "\\out" + this.imgNum + ".png"));
             } else {
                 ImageIO.write(bufIImg, "png", new File(/*path+ "/"+*/directory + "/out" + this.imgNum + ".png"));
             }
@@ -1009,11 +987,6 @@ public class Controller implements Initializable {
         }
     }
 
-    static private String getParentDir(String dir){
-        int i = dir.length()-1;
-        while(dir.charAt(i)!='\\') i--;
-        return dir.substring(0,i);
-    }
 
     static private Image resampleImage(Image image, double scale){
         int xMax = (int)(image.getWidth()*scale);
