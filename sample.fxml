@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -29,12 +28,9 @@
           <items>
             <MenuItem mnemonicParsing="false" onAction="#open" text="Open reference image…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
             <MenuItem mnemonicParsing="false" onAction="#restore" text="restore progress…" />
             <MenuItem mnemonicParsing="false" onAction="#saveProgress" text="Save progress" />
-                  <MenuItem mnemonicParsing="false" onAction="#export" text="Export" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
       </menus>
@@ -82,7 +78,7 @@
                   <TextField fx:id="fieldOne8" onKeyPressed="#enterHandle8" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                   <Button mnemonicParsing="false" onAction="#minusOne8" text="-" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                   <Button mnemonicParsing="false" onAction="#plusOne8" text="+" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-                  <Slider fx:id="slideOne8" blockIncrement="1.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                  <Slider fx:id="slideOne8" blockIncrement="0.1" GridPane.columnIndex="4" GridPane.rowIndex="5" />
                   <Label alignment="CENTER" prefHeight="16.0" prefWidth="241.0" text="Population Size" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                   <TextField fx:id="fieldPopSize" onKeyPressed="#enterPopSize" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                   <TextField fx:id="fieldNumParents" onKeyPressed="#enterNumParents" GridPane.columnIndex="2" GridPane.rowIndex="7" />
@@ -132,10 +128,10 @@
                                  <children>
                                     <LineChart fx:id="generalCh" prefHeight="320.0" prefWidth="390.0">
                                       <xAxis>
-                                        <NumberAxis side="BOTTOM" fx:id="genXAxis"/>
+                                        <NumberAxis fx:id="genXAxis" side="BOTTOM" />
                                       </xAxis>
                                       <yAxis>
-                                        <NumberAxis side="LEFT" fx:id="genYAxis"/>
+                                        <NumberAxis fx:id="genYAxis" side="LEFT" />
                                       </yAxis>
                                     </LineChart>
                                  </children>

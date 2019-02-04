@@ -1,6 +1,7 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Control;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -8,9 +9,13 @@ import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.DoubleUnaryOperator;
 
 public class advancedSliderController implements Initializable{
 
+    /**
+     *
+     */
     @FXML
     private Slider sliderAddPoly;
 
@@ -53,28 +58,33 @@ public class advancedSliderController implements Initializable{
     @FXML
     private TextField fieldShiftVertex;
 
+    /**
+     *  function to get references to needed fields
+     * @param controller main GUI controller
+     */
     public void setParentController(Controller controller) {
         this.parentController = controller;
     }
 
     private Controller parentController;
 
-
-    public advancedSliderController() {
-//        fieldAddPoly.setText(Double.toString(Controller.getNowChAddPol()));
-//        fieldDelPoly.setText(Double.toString(Controller.getNowChDelPol()));
-//        fieldPolySize.setText(Double.toString(Controller.getNowPolSize()));
-//        fieldChangeCol.setText(Double.toString(Controller.getNowColChange()));
-//        fieldAddVertex.setText(Double.toString(Controller.getNowChAddVer()));
-//        fieldDelVertex.setText(Double.toString(Controller.getNowChDelVer()));
-//        fieldShiftVertex.setText(Double.toString(Controller.getNowShVer()));
-    }
+//
+//    public advancedSliderController() {
+//    }
 
 
-
+    /**
+     * implement initializable interface
+     * @param var1 not used
+     * @param var2 not used
+     */
     @Override
     public void initialize(URL var1, ResourceBundle var2) {}
 
+    /**
+     * initialize all advanced sliders and textfields with prepared default values
+     * and apply listeners
+     */
     public void userInit(){
         fieldAddPoly.setText(Double.toString(parentController.getParams().addPolyChance));
         sliderAddPoly.setValue(parentController.getParams().addPolyChance);
@@ -143,9 +153,13 @@ public class advancedSliderController implements Initializable{
     }
 
 //
-//    start code for chnging NowChAddPoly
+//    start code for changing NowChAddPoly
 //
 
+    /**
+     * function do decrement chances of adding a polygon field
+     * @param event not used
+     */
     @FXML
     protected void minusOneAddPoly(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -157,7 +171,10 @@ public class advancedSliderController implements Initializable{
             sliderAddPoly.setValue(parentController.getParams().addPolyChance);
         }
     }
-
+    /**
+     * function to increment chances of adding a polygon field
+     * @param event not used
+     */
     @FXML
     protected void plusOneAddPoly(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -172,6 +189,10 @@ public class advancedSliderController implements Initializable{
         }
     }
 
+    /**
+     * function to change chance of adding a polygon field from textField
+     * @param event not used
+     */
     @FXML
     protected void enterAddPoly(KeyEvent event) {
         if (!parentController.isRunning()) {
@@ -191,7 +212,10 @@ public class advancedSliderController implements Initializable{
 //
 //    start code for changing NowChDelPoly
 //
-
+    /**
+     * function to decrement chance of deleting a polygon field
+     * @param event not used
+     */
     @FXML
     protected void minusOneDelPoly(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -203,7 +227,10 @@ public class advancedSliderController implements Initializable{
             sliderDelPoly.setValue(parentController.getParams().deletePolyChance);
         }
     }
-
+    /**
+     * function to increment chance of deleting a polygon field
+     * @param event not used
+     */
     @FXML
     protected void plusOneDelPoly(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -218,6 +245,10 @@ public class advancedSliderController implements Initializable{
         }
     }
 
+    /**
+     * funciton to change chance of deleting a polygon field from textField
+     * @param event not used
+     */
     @FXML
     protected void enterDelPoly(KeyEvent event) {
         if (!parentController.isRunning()) {
@@ -237,7 +268,10 @@ public class advancedSliderController implements Initializable{
 //
 //    start code for changing size
 //
-
+    /**
+     * function to decrement chance of changing polygon size field
+     * @param event not used
+     */
     @FXML
     protected void minusOnePolySize(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -251,7 +285,10 @@ public class advancedSliderController implements Initializable{
             sliderPolySize.setValue(parentController.getParams().polygonSize);
         }
     }
-
+    /**
+     * function to increment chance of changing polygon size field
+     * @param event not used
+     */
     @FXML
     protected void plusOnePolySize(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -266,6 +303,10 @@ public class advancedSliderController implements Initializable{
         }
     }
 
+    /**
+     * function to change chance of changing polygon size field from textField
+     * @param event not used
+     */
     @FXML
     protected void enterPolySize(KeyEvent event) {
         if (!parentController.isRunning()) {
@@ -285,7 +326,10 @@ public class advancedSliderController implements Initializable{
 //
 //    start code for changing colour
 //
-
+    /**
+     * function to decrement chance of changing polygon colour
+     * @param event not used
+     */
     @FXML
     protected void minusOneChangeCol(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -297,7 +341,10 @@ public class advancedSliderController implements Initializable{
             sliderChangeCol.setValue(parentController.getParams().colorChange);
         }
     }
-
+    /**
+     * function to increment chance of changing polygon colour
+     * @param event not used
+     */
     @FXML
     protected void plusOneChangeCol(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -312,6 +359,10 @@ public class advancedSliderController implements Initializable{
         }
     }
 
+    /**
+     * function to change chance of changing polygon colour from textField
+     * @param event not used
+     */
     @FXML
     protected void enterChangeCol(KeyEvent event) {
         if (!parentController.isRunning()) {
@@ -331,7 +382,10 @@ public class advancedSliderController implements Initializable{
 //
 //    start code for adding vertex
 //
-
+    /**
+     * function to decrement chance of adding new vertex to polygon
+     * @param event not used
+     */
     @FXML
     protected void minusOneAddVertex(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -343,7 +397,10 @@ public class advancedSliderController implements Initializable{
             sliderAddVertex.setValue(parentController.getParams().addVertexChance);
         }
     }
-
+    /**
+     * function to increment chance of adding vertex to polygon
+     * @param event not used
+     */
     @FXML
     protected void plusOneAddVertex(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -358,6 +415,10 @@ public class advancedSliderController implements Initializable{
         }
     }
 
+    /**
+     * function to change chance of adding vertex to polygon from textField
+     * @param event not used
+     */
     @FXML
     protected void enterAddVertex(KeyEvent event) {
         if (!parentController.isRunning()) {
@@ -377,7 +438,10 @@ public class advancedSliderController implements Initializable{
 //
 //    start code for deleting vertex
 //
-
+    /**
+     * function to decrement chance of deleting a vertex from a polygon
+     * @param event not used
+     */
     @FXML
     protected void minusOneDelVertex(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -389,7 +453,10 @@ public class advancedSliderController implements Initializable{
             sliderDelVertex.setValue(parentController.getParams().deleteVertexChance);
         }
     }
-
+    /**
+     * function to increment chance of deleting vertex from a polygon
+     * @param event not used
+     */
     @FXML
     protected void plusOneDelVertex(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -404,6 +471,10 @@ public class advancedSliderController implements Initializable{
         }
     }
 
+    /**
+     * function to change chance of deleting a vertex from a polygon from textField
+     * @param event not used
+     */
     @FXML
     protected void enterDelVertex(KeyEvent event) {
         if (!parentController.isRunning()) {
@@ -423,7 +494,10 @@ public class advancedSliderController implements Initializable{
 //
 //    start code for shifting vertex
 //
-
+    /**
+     * function to decrement chance of shifting vertex in a polygon
+     * @param event not used
+     */
     @FXML
     protected void minusOneShiftVertex(ActionEvent event) {
         if (!parentController.isRunning()) {
@@ -435,14 +509,17 @@ public class advancedSliderController implements Initializable{
             sliderShiftVertex.setValue(parentController.getParams().vertexShift);
         }
     }
-
+    /**
+     * function to increment chance of shifting vertex in a polygon
+     * @param event not used
+     */
     @FXML
     protected void plusOneShiftVertex(ActionEvent event) {
         if (!parentController.isRunning()) {
             if (parentController.getParams().vertexShift >= 0.2) {
                 return;
             }
-//            System.out.println(Controller.getNowChAddPol());
+//       git     System.out.println(Controller.getNowChAddPol());
             parentController.getParams().vertexShift += 0.2/100;
             fieldShiftVertex.setText(Double.toString(parentController.getParams().vertexShift));
             sliderShiftVertex.setValue(parentController.getParams().vertexShift);
@@ -450,6 +527,10 @@ public class advancedSliderController implements Initializable{
         }
     }
 
+    /**
+     * function to change chance of shifting vertex in a polygon from texField
+     * @param event not used
+     */
     @FXML
     protected void enterShiftVertex(KeyEvent event) {
         if (!parentController.isRunning()) {
