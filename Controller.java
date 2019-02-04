@@ -934,8 +934,12 @@ public class Controller implements Initializable {
         Image img;
         System.out.println(System.getProperty("os.name"));
 //        System.out.println(dir);
-        if (System.getProperty("os.name").contains("Windows")) img = new Image("FILE:///"+dir);
-        else img = new Image(dir);
+        if (System.getProperty("os.name").contains("Windows")){ img = new Image("FILE:///"+dir);}
+        else{
+//            img = ImageIO.read(dir);
+            img = new Image("file:"+dir);
+        }
+
         this.rImage.setImage(img);
         this.rImage.setFitWidth(390);
         this.rImage.setPreserveRatio(true);
