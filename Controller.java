@@ -127,6 +127,7 @@ public class Controller implements Initializable {
      * set of evolving polygons, is later rendered as an image to compare with original
      */
     private PolygonSet entity;
+    private Image tempImg;
 
     /**
      *
@@ -473,6 +474,21 @@ public class Controller implements Initializable {
         if (runningScale)
             entityDisplay.drawROI(gc);
         AppThread.runAndWait(()->this.lImage.setImage(canvas.snapshot(null, null)));
+    }
+    private Image getRenderedImage(){
+        if (rImage.getImage() == null)return null;
+        if (entity.getTargetImage() == null) {
+            entity.setTargetImage(resampleImage(rImage.getImage(),scale));
+        }
+        final javafx.scene.canvas.Canvas canvas = new Canvas(rImage.getImage().getWidth(),rImage.getImage().getHeight());
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        PolygonSet entityDisplay = (PolygonSet)entity.clone();
+        entityDisplay.setScale(1/scale);
+        entityDisplay.drawBackground(gc, scale);
+        if(entityDisplay.getBase() != null) entityDisplay.getBase().drawPolygons(gc);
+        entityDisplay.drawPolygons(gc);
+        AppThread.runAndWait(()->tempImg = canvas.snapshot(null, null));
+        return tempImg;
     }
 
     /**
@@ -892,8 +908,10 @@ public class Controller implements Initializable {
 //                } else {
 //                    System.out.println(dir.getAbsolutePath());
 //                }
-                if (System.getProperty("os.name").contains("Windows"))
-                    SerialTest.serialize(entity, /*dir.getAbsolutePath() +*/ "ImageDataSets\\polySet.txt");
+                if (System.getProperty("os.name").contains("Windows")) {
+                    new File("ImageDataSets").mkdirs();
+                    SerialTest.serialize(entity, /*dir.getAbsolutePath() +*/ "polySet.txt");
+                }
                 else
                     SerialTest.serialize(entity, "polySet.txt");
             }
@@ -974,14 +992,14 @@ public class Controller implements Initializable {
      */
     private void saveImg() {
         try {
-            BufferedImage bufIImg = SwingFXUtils.fromFXImage(lImage.getImage(), null);
+            BufferedImage bufIImg = SwingFXUtils.fromFXImage(getRenderedImage(), null);
             System.out.println(path);
             File directory = new File("Images");
             if (!directory.exists()) {
                 directory.mkdir();
             }
             if (System.getProperty("os.name").contains("Windows")) {
-
+                new File(getParentDir(path) + "\\Images").mkdirs();
                 ImageIO.write(bufIImg, "png", new File(getParentDir(path) + "\\Images\\out" + this.imgNum + ".png"));
             } else {
                 ImageIO.write(bufIImg, "png", new File(/*path+ "/"+*/directory + "/out" + this.imgNum + ".png"));
